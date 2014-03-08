@@ -140,25 +140,13 @@ class ProjectionManager(object):
         add_batter_projection_args  = getSQLAlchemyFields(BatterProjection)
         add_pitcher_projection_args = getSQLAlchemyFields(PitcherProjection)
 
+
         for row in reader:
 
             data = dict(zip(header_row, row[:n]))
             if post_processor is not None:
                 data = post_processor(data)
 
-            if 'year' in data:
-                year = int(data['year'])
-            elif len(systems) == 1:
-                year = int(list(systems.keys())[0])
-            else:
-                raise Exception('Multiple years supplied, but no year column '\
-                                'found in data')
-
-            try:
-                system = systems[year]
-            except KeyError:
-                print('Unable to find projection system for year %d, skipping' % year)
-                continue
 
             if player_type == 'batter':
                 player_data = { x: data[x] for x in add_batter_args if x in data }
@@ -247,7 +235,7 @@ class ProjectionManager(object):
 
                 for player, pair in players:
                     #print player, pair
-                    key = str(player.mlb_id) + "_" + str(year)
+                    key = str(player.fg_id) + "_" + str(year)
                     projs = { system: None for system in systems2 }
 
                     for (_, projection) in pair:
