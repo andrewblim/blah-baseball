@@ -147,6 +147,19 @@ class ProjectionManager(object):
             if post_processor is not None:
                 data = post_processor(data)
 
+            if 'year' in data:
+                year = int(data['year'])
+            elif len(systems) == 1:
+                year = int(list(systems.keys())[0])
+            else:
+                raise Exception('Multiple years supplied, but no year column '\
+                                'found in data')
+            try:
+                system = systems[year]
+            except KeyError:
+                print('Unable to find projection system for year %d, skipping' % year)
+                continue
+
 
             if player_type == 'batter':
                 player_data = { x: data[x] for x in add_batter_args if x in data }

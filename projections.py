@@ -217,7 +217,7 @@ class MyProjectionManager(pm.ProjectionManager):
             '',     # skip age range
             'off',
             'lg',
-            'fangraphs_id',
+            'fg_id',
             ]
 
         fg_pitcher_header = \
@@ -438,7 +438,7 @@ class MyProjectionManager(pm.ProjectionManager):
             'lob_wins',
             'fdp_wins',
             '',         # skip age range
-            'fangraphs_id'
+            'fg_id'
             ]
 
         self.read_projection_csv(os.path.join(base_dir, 'data/FanGraphs Actual Batting 2004-2013.csv'), 
