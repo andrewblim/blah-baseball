@@ -18,55 +18,69 @@ class ProjectionManager(object):
         self.session = Session()
         Base.metadata.create_all(self.engine)
 
-    def add_or_update_player(self, player_type, overwrite=False, 
+    def read_player_csv(self, filename, header_row, 
+                        post_processor=None, 
+                        skip_rows=1, 
+                        commit_frequency=1000,
+                        verbose=False):
+
+        """
+        Read a CSV file full of player IDs into the database. Generates Players
+        but no ProjectionSystems or projections. 
+        """
+
+        reader = csv.reader(open(filename, 'r'))
+        for i in range(skip_rows):
+            next(reader)
+        n = len(header_row)
+
+        add_player_args = getSQLAlchemyFields(Player)
+
+        count = 0
+        for row in reader:
+
+            player = None
+            projection = None
+
+            data = dict(zip(header_row, row[:n]))
+            if post_processor is not None:
+                data = post_processor(data)
+
+            player_data = { x: data[x] for x in add_player_args if x in data }
+            try:
+                player = self.add_or_update_player(**player_data)
+            except Exception as e:
+                print(e)
+                        
+            if verbose and (player is not None) and (projection is not None):
+                print('%s', player)
+
+            count = count + 1
+            if verbose and count % 1000 == 0:
+                print('loaded %d' % count)
+                self.session.commit()
+                
+        self.session.commit()
+
+
+
+    def add_or_update_player(self, overwrite=False, 
                              **kwargs):
         """
         Add a player to the database. If a player is already found with 
         matching ids, populate any missing fields (overwrite=False) or 
         overwrite whatever values they might have (overwrite=True). 
-
-        If no id fields are supplied but last_name and first_name (and 
-        optionally birthdate) are supplied, tries to match on that. Not ideal
-        due to nicknames, name changes, players with identical names, etc. In
-        this case this function will _not_ try to create a new player, but 
-        will raise an exception if no players are found. 
         """
 
-        if player_type == 'batter':
-            #player_class = Batter
-            player_class = Player
-        elif player_type == 'pitcher':
-            #player_class = Pitcher
-            player_class = Player
-        elif player_type == 'all':
-            player_class = Player
-        else:
-            raise Exception('Error: add_or_update_player must be called with '\
-                            'player_type = either "batter" or "pitcher" or "all"')
-
-        matches = []
-
-        id_clauses = [ (getattr(player_class, k) == kwargs[k])
+        id_clauses = [ (getattr(Player, k) == kwargs[k])
                        for k in Player.id_fields() 
                        if (k in kwargs and kwargs[k] != '') ]
-#        name_clauses = [ (getattr(player_class, k) == kwargs[k])
-#                         for k in Player.name_fields()
-#                         if (k in kwargs and kwargs[k] != '') ]
         
-        criteria = {}
-        if player_type != 'all' and len(id_clauses) > 0:
-            matches = self.query(player_class).filter(or_(*id_clauses)).all()
- #           names_only = False
- #       elif len(name_clauses) > 0:
- #           matches = self.query(player_class).filter(and_(*name_clauses)).all()
- #           names_only = True
- #       elif player_type != 'all':
-#            raise Exception('Error: add_or_update_player must be called with '\
-#                            'at least one id parameter or both last_name and '\
-#                            'first_name parameters')
+        matches = []
+        if len(id_clauses) > 0:
+            matches = self.query(Player).filter(or_(*id_clauses)).all()
 
         match = None
-
         if len(matches) > 1:
             raise Exception('Error: multiple matches found: %s' % matches)
         elif len(matches) == 1:
@@ -75,17 +89,12 @@ class ProjectionManager(object):
                 if overwrite or getattr(match, field) is None or getattr(match, field) == '':
                     setattr(match, field, value)
         elif len(id_clauses) > 0:
-            #if names_only:
- #               raise Exception('Error: could not find player matching '\
-#                                'criteria %s' % kwargs)
-#            else:
-            
-            if player_type == 'all':
-                match = player_class(**kwargs)
-                self.session.merge(match)
+            match = Player(**kwargs)
+            self.session.merge(match)
 
-#        self.session.commit()
         return match
+
+
 
     def add_or_update_projection_system(self, name, year, is_actual):
         """

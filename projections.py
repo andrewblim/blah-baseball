@@ -83,12 +83,10 @@ class MyProjectionManager(pm.ProjectionManager):
         header_row = ['mlb_id','bp_id','fg_id','fg_minor_id','last_name','first_name',
                       '','','','','bats','throws','height','weight',
                       'birth_year','birth_month','birth_day']
-        self.read_projection_csv(filename, 'register', 2011,
-                                 is_actual=True,
-                                 player_type='all',
-                                 header_row=header_row, 
-                                 post_processor=register_processor,
-                                 verbose=verbose)
+        self.read_player_csv(filename, 
+                             header_row=header_row, 
+                             post_processor=register_processor,
+                             verbose=verbose)
 
     # Actuals readers
     
