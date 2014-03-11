@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Boolean, Integer, Float, String, Date, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy.schema import UniqueConstraint, Index
 import datetime
 
 Base = declarative_base()
@@ -19,6 +19,13 @@ class Player(Base):
     fg_id         = Column(String(20))
     lahman_id     = Column(String(20))
     steamer_id    = Column(String(20))
+
+    Index('idx_mlb_id', 'mlb_id', unique=True)
+    Index('idx_retrosheet_id', 'retrosheet_id', unique=True)
+    Index('idx_bp_id', 'bp_id', unique=True)
+    Index('idx_fg_id', 'fg_id', unique=True)
+    Index('idx_lahman_id', 'lahman_id', unique=True)
+    Index('idx_steamer_id', 'steamer_id', unique=True)
 
     last_name  = Column(String(50))
     first_name = Column(String(50))
