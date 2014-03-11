@@ -24,17 +24,54 @@ class Player(Base):
     first_name = Column(String(50))
     birthdate  = Column(Date)
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'players',
-        'polymorphic_on': type
-    }
+    batter_projections  = relationship('BatterProjection', backref='player')
+    pitcher_projections = relationship('PitcherProjection', backref='pitcher')
+
+    def __repr__(self):
+        return '<Player %d (%s, %s)>' % (self.id, self.last_name, self.first_name)
 
     def age(self, from_date=datetime.date.today()):
         return (from_date - self.birthdate)
 
     def prettyprint(self):
+
         print('%s, %s (id: %d, FG ID: %s)' % \
               (self.last_name, self.first_name, self.id, self.fg_id))
+        print()
+
+        batter_projections  = sorted(self.batter_projections, 
+                                     key=lambda x: (x.projection_system.name, x.projection_system.year))
+        pitcher_projections = sorted(self.projections, 
+                                     key=lambda x: (x.projection_system.name, x.projection_system.year))
+
+        if len(batter_projections) > 0:
+            print('%26s : %5s %5s %3s %3s %3s %3s' % \
+                ('Projection', 'OBP', 'SLG', 'HR', 'R', 'RBI', 'SB'))
+            
+            for proj in batter_projections:
+                statline = '%20s, %4d :' % \
+                           (proj.projection_system.name, proj.projection_system.year)
+                statline += (' %5.3f' % proj.obp) if proj.obp is not None else ' -----'
+                statline += (' %5.3f' % proj.slg) if proj.slg is not None else ' -----'
+                statline += (' %3d' % proj.hr) if proj.hr is not None else ' ---'
+                statline += (' %3d' % proj.r) if proj.r is not None else ' ---'
+                statline += (' %3d' % proj.rbi) if proj.rbi is not None else ' ---'
+                statline += (' %3d' % proj.sb) if proj.sb is not None else ' ---'
+                print(statline)
+
+        if len(pitcher_projections) > 0:
+            print('%26s : %3s %3s %5s %3s %5s %5s' % \
+                ('Projection', 'W', 'SV', 'ERA', 'K', 'WHIP', 'IP'))
+            for proj in pitcher_projections:
+                statline = '%20s, %4d :' % \
+                           (proj.projection_system.name, proj.projection_system.year)
+                statline += (' %3d' % proj.w) if proj.w is not None else ' ---'
+                statline += (' %3d' % proj.sv) if proj.sv is not None else ' ---'
+                statline += (' %5.2f' % proj.era) if proj.era is not None else ' -----'
+                statline += (' %3d' % proj.k) if proj.k is not None else ' ---'
+                statline += (' %5.3f' % proj.whip) if proj.whip is not None else ' -----'
+                statline += (' %5.1f' % proj.ip) if proj.ip is not None else ' -----'
+                print(statline)
 
     @classmethod
     def id_fields(cls):
@@ -45,65 +82,6 @@ class Player(Base):
     def name_fields(cls):
         return ['last_name', 'first_name']
 
-class Batter(Player):
-
-#    __tablename__ = 'batters'
-#    id = Column(Integer, ForeignKey('players.id'), primary_key=True)
-    projections = relationship('BatterProjection', backref='batter')
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'batters'
-    }
-
-    def __repr__(self):
-        return '<Batter %d (%s, %s)>' % (self.id, self.last_name, self.first_name)
-
-    def prettyprint(self):
-        super(Batter, self).prettyprint()
-        print()
-        print('%26s : %5s %5s %3s %3s %3s %3s' % \
-              ('Projection', 'OBP', 'SLG', 'HR', 'R', 'RBI', 'SB'))
-        projections = sorted(self.projections, key=lambda x: (x.projection_system.name, x.projection_system.year))
-        for proj in projections:
-            statline = '%20s, %4d :' % \
-                       (proj.projection_system.name, proj.projection_system.year)
-            statline += (' %5.3f' % proj.obp) if proj.obp is not None else ' -----'
-            statline += (' %5.3f' % proj.slg) if proj.slg is not None else ' -----'
-            statline += (' %3d' % proj.hr) if proj.hr is not None else ' ---'
-            statline += (' %3d' % proj.r) if proj.r is not None else ' ---'
-            statline += (' %3d' % proj.rbi) if proj.rbi is not None else ' ---'
-            statline += (' %3d' % proj.sb) if proj.sb is not None else ' ---'
-            print(statline)
-
-class Pitcher(Player):
-
-#    __tablename__ = 'pitchers'
-#    id = Column(Integer, ForeignKey('players.id'), primary_key=True)
-    projections = relationship('PitcherProjection', backref='pitcher')
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'pitchers'
-    }
-
-    def __repr__(self):
-        return '<Pitcher %d (%s, %s)>' % (self.id, self.last_name, self.first_name)
-
-    def prettyprint(self):
-        super(Pitcher, self).prettyprint()
-        print()
-        print('%26s : %3s %3s %5s %3s %5s %5s' % \
-              ('Projection', 'W', 'SV', 'ERA', 'K', 'WHIP', 'IP'))
-        projections = sorted(self.projections, key=lambda x: (x.projection_system.name, x.projection_system.year))
-        for proj in projections:
-            statline = '%20s, %4d :' % \
-                       (proj.projection_system.name, proj.projection_system.year)
-            statline += (' %3d' % proj.w) if proj.w is not None else ' ---'
-            statline += (' %3d' % proj.sv) if proj.sv is not None else ' ---'
-            statline += (' %5.2f' % proj.era) if proj.era is not None else ' -----'
-            statline += (' %3d' % proj.k) if proj.k is not None else ' ---'
-            statline += (' %5.3f' % proj.whip) if proj.whip is not None else ' -----'
-            statline += (' %5.1f' % proj.ip) if proj.ip is not None else ' -----'
-            print(statline)
 
 class ProjectionSystem(Base):
 
@@ -125,12 +103,12 @@ class ProjectionSystem(Base):
 class BatterProjection(Base):
 
     __tablename__ = 'batter_projections'
+
     id = Column(Integer, primary_key=True)
-    #batter_id = Column(Integer, ForeignKey('batters.id'))
-    batter_id = Column(Integer, ForeignKey('players.id'))
+    player_id = Column(Integer, ForeignKey('players.id'))
     projection_system_id = Column(Integer, ForeignKey('projection_systems.id'))
-    #UniqueConstraint('batter_id', 'projection_id')
-    UniqueConstraint('batter_id', 'projection_system_id')
+
+    UniqueConstraint('player_id', 'projection_system_id')
 
     team = Column(String(3))
 
@@ -367,17 +345,16 @@ class BatterProjection(Base):
     dc_fl = Column(String(2))
 
     def __repr__(self):
-        return '<BatterProjection %d>' % (self.id)
+        return '<BatterProjection %d (Player %d, ProjectionSystem %d)>' % \
+            (self.id, self.player_id, self.projection_system_id)
 
 class PitcherProjection(Base):
 
     __tablename__ = 'pitcher_projections'
     id = Column(Integer, primary_key=True)
-    #pitcher_id = Column(Integer, ForeignKey('pitchers.id'))
-    pitcher_id = Column(Integer, ForeignKey('players.id'))
+    player_id = Column(Integer, ForeignKey('players.id'))
     projection_system_id = Column(Integer, ForeignKey('projection_systems.id'))
-    #UniqueConstraint('pitcher_id', 'projection_id')
-    UniqueConstraint('pitcher_id', 'projection_system_id')
+    UniqueConstraint('player_id', 'projection_system_id')
 
     team = Column(String(3))
 
@@ -621,4 +598,5 @@ class PitcherProjection(Base):
     fdp_wins = Column(Float)
 
     def __repr__(self):
-        return '<PitcherProjection %d>' % (self.id)
+        return '<PitcherProjection %d (Player %d, ProjectionSystem %d)>' % \
+            (self.id, self.player_id, self.projection_system_id)
