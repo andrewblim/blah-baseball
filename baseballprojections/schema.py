@@ -47,8 +47,8 @@ class Player(Base):
 
 class Batter(Player):
 
-    __tablename__ = 'batters'
-    id = Column(Integer, ForeignKey('players.id'), primary_key=True)
+#    __tablename__ = 'batters'
+#    id = Column(Integer, ForeignKey('players.id'), primary_key=True)
     projections = relationship('BatterProjection', backref='batter')
 
     __mapper_args__ = {
@@ -77,8 +77,8 @@ class Batter(Player):
 
 class Pitcher(Player):
 
-    __tablename__ = 'pitchers'
-    id = Column(Integer, ForeignKey('players.id'), primary_key=True)
+#    __tablename__ = 'pitchers'
+#    id = Column(Integer, ForeignKey('players.id'), primary_key=True)
     projections = relationship('PitcherProjection', backref='pitcher')
 
     __mapper_args__ = {
@@ -126,9 +126,11 @@ class BatterProjection(Base):
 
     __tablename__ = 'batter_projections'
     id = Column(Integer, primary_key=True)
-    batter_id = Column(Integer, ForeignKey('batters.id'))
+    #batter_id = Column(Integer, ForeignKey('batters.id'))
+    batter_id = Column(Integer, ForeignKey('players.id'))
     projection_system_id = Column(Integer, ForeignKey('projection_systems.id'))
-    UniqueConstraint('batter_id', 'projection_id')
+    #UniqueConstraint('batter_id', 'projection_id')
+    UniqueConstraint('batter_id', 'projection_system_id')
 
     team = Column(String(3))
 
@@ -360,6 +362,10 @@ class BatterProjection(Base):
     # positions = Column(String(20))
     # rookie = Column(Integer)
 
+    positions = Column(String(20))
+    rookie = Column(Integer)
+    dc_fl = Column(String(2))
+
     def __repr__(self):
         return '<BatterProjection %d>' % (self.id)
 
@@ -367,9 +373,11 @@ class PitcherProjection(Base):
 
     __tablename__ = 'pitcher_projections'
     id = Column(Integer, primary_key=True)
-    pitcher_id = Column(Integer, ForeignKey('pitchers.id'))
+    #pitcher_id = Column(Integer, ForeignKey('pitchers.id'))
+    pitcher_id = Column(Integer, ForeignKey('players.id'))
     projection_system_id = Column(Integer, ForeignKey('projection_systems.id'))
-    UniqueConstraint('pitcher_id', 'projection_id')
+    #UniqueConstraint('pitcher_id', 'projection_id')
+    UniqueConstraint('pitcher_id', 'projection_system_id')
 
     team = Column(String(3))
 
