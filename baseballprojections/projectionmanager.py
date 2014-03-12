@@ -74,7 +74,7 @@ class ProjectionManager(object):
 
         id_clauses = [ (getattr(Player, k) == kwargs[k])
                        for k in Player.id_fields() 
-                       if (k in kwargs and kwargs[k] != '') ]
+                       if (k in kwargs and kwargs[k] != '' and kwargs[k] is not None) ]
         
         matches = []
         if len(id_clauses) > 0:

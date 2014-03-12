@@ -12,9 +12,9 @@ class Player(Base):
 
     id  = Column(Integer, primary_key=True)
 
-    chadwick_id   = Column(String(50))
-    mlb_id        = Column(String(20))
-    fg_id         = Column(String(20))
+    chadwick_id   = Column(String(50), unique=True)
+    mlb_id        = Column(String(20), unique=True)
+    fg_id         = Column(String(20), unique=True)
 
     retrosheet_id = Column(String(20))
     br_id         = Column(String(20))
@@ -22,15 +22,15 @@ class Player(Base):
     lahman_id     = Column(String(20))
     steamer_id    = Column(String(20))
 
-    Index('idx_chadwick_id', 'chadwick_id', unique=True)
-    Index('idx_mlb_id', 'mlb_id', unique=True)
-    Index('idx_fg_id', 'fg_id', unique=True)
+    Index('idx_chadwick_id', 'chadwick_id')
+    Index('idx_mlb_id', 'mlb_id')
+    Index('idx_fg_id', 'fg_id')
 
-    Index('idx_retrosheet_id', 'retrosheet_id', unique=True)
-    Index('idx_br_id', 'br_id', unique=True)
-    Index('idx_bp_id', 'bp_id', unique=True)
-    Index('idx_lahman_id', 'lahman_id', unique=True)
-    Index('idx_steamer_id', 'steamer_id', unique=True)
+    Index('idx_retrosheet_id', 'retrosheet_id')
+    Index('idx_br_id', 'br_id')
+    Index('idx_bp_id', 'bp_id')
+    Index('idx_lahman_id', 'lahman_id')
+    Index('idx_steamer_id', 'steamer_id')
 
     last_name  = Column(String(50))
     first_name = Column(String(50))
@@ -87,7 +87,7 @@ class Player(Base):
 
     @classmethod
     def id_fields(cls):
-        return ['mlb_id', 'fg_id']
+        return ['chadwick_id', 'mlb_id', 'fg_id']
 
     @classmethod
     def name_fields(cls):
