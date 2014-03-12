@@ -129,18 +129,23 @@ class ProjectionManager(object):
  #       self.session.commit()
         return projection
 
-    def read_projection_csv(self, filename, projection_name, year, is_actual,
-                            player_type, header_row, post_processor=None, 
+    def read_projection_csv(self, filename, projection_name, years, is_actual,
+                            projection_type, header_row, post_processor=None, 
                             skip_rows=1, verbose=False):
 
-        if player_type not in ('batter', 'pitcher','all'):
+        if player_type not in ('batter', 'pitcher'):
             raise Exception('player_type is %s, must be either '\
-                            '"batter" or "pitcher" or "all"' % player_type)
+                            '"batter" or "pitcher"' % player_type)
 
-        if player_type != 'all':
+        try:
+            years = iter(years)
+        except TypeError:
+            years = iter([years])
+        for year in years:
             projection_system = self.add_or_update_projection_system('%s' % projection_name, 
-                                                                 year, 
-                                                                 is_actual)
+                                                                     year, 
+                                                                     is_actual)
+        
         reader = csv.reader(open(filename, 'r'))
         for i in range(skip_rows):
             next(reader)

@@ -93,16 +93,227 @@ class MyProjectionManager(pm.ProjectionManager):
 
     # Actuals readers
     
-    def read_actuals_batters_2011(self, filename, verbose=False):
+    def read_fangraphs_batters(self, filename, verbose=False):
 
-        header_row = ['fg_id', 'full_name', 'team', '', 'pa', 'ab', 'r', 'rbi', 
-                      'obp', 'slg', 'sb', 'cs', 'rookie', '']
-        self.read_projection_csv(filename, 'actual', 2011,
-                                 is_actual=True,
-                                 player_type='batter',
-                                 header_row=header_row, 
-                                 post_processor=helper.batter_post_processor,
+        fg_batter_header = \
+            [
+            'year', 
+            'full_name', 
+            'team',
+            'age',
+            'g',
+            'ab',
+            'pa',
+            'h',
+            'h1b',
+            'h2b',
+            'h3b',
+            'hr',
+            'r',
+            'rbi',
+            'bb',
+            'ibb',
+            'k',
+            'hbp',
+            'sf',
+            'sh',
+            'gdp',
+            'sb',
+            'cs',
+            'avg',
+            'gb',
+            'fb',
+            'ld',
+            'iffb',
+            'pitches',
+            'balls',
+            'strikes',
+            'ifh',
+            'bu',
+            'buh',
+            'bb_pct',
+            'k_pct',
+            'bb_k',
+            'obp',
+            'slg',
+            'ops',
+            'iso',
+            'babip',
+            'gb_fb',
+            'ld_pct',
+            'gb_pct',
+            'fb_pct',
+            'hr_fb',
+            'iffb_pct',
+            'ifh_pct',
+            'buh_pct',
+            'woba',
+            'wraa',
+            'wrc',
+            'bat',
+            'fld',
+            'rep',
+            'pos',
+            'rar',
+            'war',
+            '',     # skip dollars
+            'spd',
+            'wrc_plus',
+            'wpa',
+            'wpa_minus',
+            'wpa_plus',
+            're24',
+            'rew',
+            'pli',
+            'phli',
+            'ph',
+            'wpa_li',
+            'clutch',
+            'fb_pct',
+            'fbv',
+            'sl_pct',
+            'slv',
+            'ct_pct',
+            'ctv',
+            'cb_pct',
+            'cbv',
+            'ch_pct',
+            'chv',
+            'sf_pct',
+            'sfv',
+            'kn_pct',
+            'knv',
+            'xx_pct',
+            'po_pct',
+            'wfb',
+            'wsl',
+            'wct',
+            'wcb',
+            'wch',
+            'wsf',
+            'wkn',
+            'wfbc',
+            'wslc',
+            'wctc',
+            'wcbc',
+            'wchc',
+            'wsfc',
+            'wknc',
+            'oswing_pct',
+            'zswing_pct',
+            'swing_pct',
+            'ocontact_pct',
+            'zcontact_pct',
+            'contact_pct',
+            'zone_pct',
+            'fstrike_pct',
+            'swstr_pct',
+            'bsr',
+            'fapct_pfx',
+            'ftpct_pfx',
+            'fcpct_pfx',
+            'fspct_pfx',
+            'fopct_pfx',
+            'sipct_pfx',
+            'slpct_pfx',
+            'cupct_pfx',
+            'kcpct_pfx',
+            'eppct_pfx',
+            'chpct_pfx',
+            'scpct_pfx',
+            'knpct_pfx',
+            'unpct_pfx',
+            'vfa_pfx',
+            'vft_pfx',
+            'vfc_pfx',
+            'vfs_pfx',
+            'vfo_pfx',
+            'vsi_pfx',
+            'vsl_pfx',
+            'vcu_pfx',
+            'vkc_pfx',
+            'vep_pfx',
+            'vch_pfx',
+            'vsc_pfx',
+            'vkn_pfx',
+            'fa_x_pfx',
+            'ft_x_pfx',
+            'fc_x_pfx',
+            'fs_x_pfx',
+            'fo_x_pfx',
+            'si_x_pfx',
+            'sl_x_pfx',
+            'cu_x_pfx',
+            'kc_x_pfx',
+            'ep_x_pfx',
+            'ch_x_pfx',
+            'sc_x_pfx',
+            'kn_x_pfx',
+            'fa_z_pfx',
+            'ft_z_pfx',
+            'fc_z_pfx',
+            'fs_z_pfx',
+            'fo_z_pfx',
+            'si_z_pfx',
+            'sl_z_pfx',
+            'cu_z_pfx',
+            'kc_z_pfx',
+            'ep_z_pfx',
+            'ch_z_pfx',
+            'sc_z_pfx',
+            'kn_z_pfx',
+            'wfa_pfx',
+            'wft_pfx',
+            'wfc_pfx',
+            'wfs_pfx',
+            'wfo_pfx',
+            'wsi_pfx',
+            'wsl_pfx',
+            'wcu_pfx',
+            'wkc_pfx',
+            'wep_pfx',
+            'wch_pfx',
+            'wsc_pfx',
+            'wkn_pfx',
+            'wfa_c_pfx',
+            'wft_c_pfx',
+            'wfc_c_pfx',
+            'wfs_c_pfx',
+            'wfo_c_pfx',
+            'wsi_c_pfx',
+            'wsl_c_pfx',
+            'wcu_c_pfx',
+            'wkc_c_pfx',
+            'wep_c_pfx',
+            'wch_c_pfx',
+            'wsc_c_pfx',
+            'wkn_c_pfx',
+            'oswing_pct_pfx',
+            'zswing_pct_pfx',
+            'swing_pct_pfx',
+            'ocontact_pct_pfx',
+            'zcontact_pct_pfx',
+            'contact_pct_pfx',
+            'zone_pct_pfx',
+            'pace',
+            'defense',
+            'wsb',
+            'ubr',
+            '',     # skip age range
+            'off',
+            'lg',
+            'fangraphs_id',
+            ]
+
+        self.read_projection_csv(os.path.join(base_dir, 'filename'), 
+                                 'actual', 
+                                 range(2004, 2014), 
+                                 is_actual=True, 
+                                 projection_type='batter', 
+                                 header_row=fg_batter_header,
+                                 post_processor=helper.batter_post_processor, 
                                  verbose=verbose)
+
 
     def read_actuals_pitchers_2011(self, filename, verbose=False):
 
@@ -110,70 +321,12 @@ class MyProjectionManager(pm.ProjectionManager):
                       'era', 'k9', 'h', 'bb', 'fg_id', 'rookie']
         self.read_projection_csv(filename, 'actual', 2011,
                                  is_actual=True,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=actual_pitcher_post_processor,
                                  verbose=verbose)
 
-    def read_actuals_batters_2012(self, filename, verbose=False):
 
-        header_row = ['fg_id', 'full_name', 'team', 'age', '', 'pa', 'ab', 
-                      'obp', 'slg', 'r', 'rbi', 'sb', 'cs', 'rookie', '']
-        self.read_projection_csv(filename, 'actual', 2012,
-                                 is_actual=True,
-                                 player_type='batter',
-                                 header_row=header_row, 
-                                 post_processor=helper.batter_post_processor,
-                                 verbose=verbose)
-
-    def read_actuals_pitchers_2012(self, filename, verbose=False):
-
-        header_row = ['full_name', 'team', 'w', 'sv', 'g', 'gs', 'ip', 
-                      'era', 'k9', 'h', 'bb', '', 'hbp', 'fg_id', 'rookie']
-        self.read_projection_csv(filename, 'actual', 2012,
-                                 is_actual=True,
-                                 player_type='pitcher',
-                                 header_row=header_row, 
-                                 post_processor=actual_pitcher_post_processor,
-                                 verbose=verbose)
-        
-    def read_actuals_pitchers_2013(self, filename, verbose=False):
-
-        header_row = ['full_name', 'team', 'w', 'sv', 'g', 'gs', 'ip', 
-                      'era', 'k9', 'h', 'bb', '', 'hbp', 'fg_id']
-        self.read_projection_csv(filename, 'actual', 2013,
-                                 is_actual=True,
-                                 player_type='pitcher',
-                                 header_row=header_row, 
-                                 post_processor=actual_pitcher_post_processor,
-                                 verbose=verbose)
-
-    def read_actuals_batters_2013(self, filename, verbose=False):
-
-        header_row = ['fg_id', 'full_name', 'team', '', 'pa', 'ab', 
-                      'obp', 'slg', 'r', 'rbi', 'sb', 'cs', '']
-        self.read_projection_csv(filename, 'actual', 2013,
-                                 is_actual=True,
-                                 player_type='batter',
-                                 header_row=header_row, 
-                                 post_processor=helper.batter_post_processor,
-                                 verbose=verbose)
-
-    # PECOTA readers
-
-    def read_pecota_batters_2011(self, filename, verbose=False):
-
-        header_row = ['mlb_id','full_name','last_name', 'first_name', 'team', '', '', '', '', '', 
-                      '', 'birthdate', '', 'pa', 'ab', 'r', 'h1b', 'h2b', 
-                      'h3b', 'hr', 'rbi', 'bb', 'hbp', 'k', 'sb', 'cs', 'sac', 
-                      'sf', '', '', 'obp', 'slg', '', '', '', '', '', '', '', '', 
-                      '', '', '', '', 'retrosheet_id', 'lahman_id']
-        self.read_projection_csv(filename, 'pecota', 2011,
-                                 is_actual=False,
-                                 player_type='batter',
-                                 header_row=header_row, 
-                                 post_processor=pecota_dc_batter_post_processor,
-                                 verbose=verbose)
 
     def read_pecota_pitchers_2011(self, filename, verbose=False):
 
@@ -184,7 +337,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'retrosheet_id', 'lahman_id']
         self.read_projection_csv(filename, 'pecota', 2011,
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=pecota_dc_pitcher_post_processor,
                                  verbose=verbose)
@@ -198,7 +351,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       '', '', '', '', '', '', 'dc_fl']
         self.read_projection_csv(filename, 'pecota', 2012, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=pecota_dc_batter_post_processor,
                                  verbose=verbose)
@@ -211,7 +364,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       '', '', '', '', '', '', '', 'dc_fl', 'mlb_id']
         self.read_projection_csv(filename, 'pecota', 2012,
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=pecota_dc_pitcher_post_processor,
                                  verbose=verbose)
@@ -225,7 +378,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       '', '', '', '', '', '', 'dc_fl', 'rookie_fl']
         self.read_projection_csv(filename, 'pecota', 2013, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=pecota_rdc_batter_post_processor,
                                  verbose=verbose)
@@ -238,7 +391,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       '', '', '', '', '', '', '', 'dc_fl', 'rookie_fl', 'mlb_id']
         self.read_projection_csv(filename, 'pecota', 2013,
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=pecota_rdc_pitcher_post_processor,
                                  verbose=verbose)
@@ -248,7 +401,7 @@ class MyProjectionManager(pm.ProjectionManager):
         header_row = ['full_name', 'positions', 'mlb_id', '', '', '', '', 'dollars']
         self.read_projection_csv(filename, 'pfm', 2014, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=pfm_processor,
                                  verbose=verbose)
@@ -262,7 +415,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       '', '', '', '', '', '', '', '','','','dc_fl','rookie_fl','mlb_id','','']
         self.read_projection_csv(filename, 'pecota', 2014, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=pecota_rdc_batter_post_processor,
                                  verbose=verbose)
@@ -275,7 +428,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       '', '', '', '', '', '', '', 'dc_fl', 'rookie_fl', 'mlb_id','','']
         self.read_projection_csv(filename, 'pecota', 2014,
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=pecota_rdc_pitcher_post_processor,
                                  verbose=verbose)
@@ -290,7 +443,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'cs', 'sac', 'sf', '', '', '', 'pa']
         self.read_projection_csv(filename, 'zips', 2011, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=zips_batter_post_processor,
                                  verbose=verbose)
@@ -302,7 +455,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'er', 'hr', 'bb', 'k', 'wp', '', 'hbp']
         self.read_projection_csv(filename, 'zips', 2011, 
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=zips_pitcher_post_processor,
                                  verbose=verbose)
@@ -314,7 +467,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'bb', 'k', 'hbp', 'sb', 'cs', 'sac', 'sf', '', '', '', 'pa']
         self.read_projection_csv(filename, 'zips', 2012, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=zips_batter_post_processor,
                                  verbose=verbose)
@@ -326,7 +479,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'hbp']
         self.read_projection_csv(filename, 'zips', 2012, 
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=zips_pitcher_post_processor,
                                  verbose=verbose)
@@ -338,7 +491,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'rbi', 'bb', 'k', 'hbp', 'sb', 'cs', 'sac', 'sf']
         self.read_projection_csv(filename, 'zips', 2013, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=zips_batter_post_processor,
                                  verbose=verbose)
@@ -349,7 +502,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'r','rbi', 'bb', 'k', 'hbp', 'sb', 'cs', 'avg', 'obp','slg','','','','','','fg_id']
         self.read_projection_csv(filename, 'zips', 2014, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=helper.batter_post_processor,
                                  verbose=verbose)
@@ -361,7 +514,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'hbp']
         self.read_projection_csv(filename, 'zips', 2013, 
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=zips_pitcher_post_processor,
                                  verbose=verbose)
@@ -372,7 +525,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'h', 'er', 'hr', 'k', 'bb', 'whip', '', '', '', '', 'fg_id'] 
         self.read_projection_csv(filename, 'zips', 2014, 
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=helper.pitcher_post_processor,
                                  verbose=verbose)
@@ -387,7 +540,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'slg', 'ops', '', 'r', 'rbi']
         self.read_projection_csv(filename, 'steamer', 2011, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=helper.batter_post_processor,
                                  verbose=verbose)
@@ -400,7 +553,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'l', 'sv']
         self.read_projection_csv(filename, 'steamer', 2011, 
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=helper.pitcher_post_processor,
                                  verbose=verbose)
@@ -413,7 +566,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'cs', 'avg', 'obp', 'slg']
         self.read_projection_csv(filename, 'steamer', 2012, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=helper.batter_post_processor,
                                  verbose=verbose)
@@ -426,7 +579,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'er', 'whip', 'w', 'l', 'sv']
         self.read_projection_csv(filename, 'steamer', 2012, 
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=helper.pitcher_post_processor,
                                  verbose=verbose)
@@ -439,7 +592,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'obp', 'slg', '', 'sb', 'cs', 'r', 'rbi']
         self.read_projection_csv(filename, 'steamer', 2013, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=helper.batter_post_processor,
                                  verbose=verbose)
@@ -452,7 +605,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'hbp', '', '', 'hr9', 'h', 'er', 'r', 'whip', 'w', 'l']
         self.read_projection_csv(filename, 'steamer', 2013, 
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=steamer2013_post_processor,
                                  verbose=verbose)
@@ -463,7 +616,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'r','rbi', 'bb', 'k', 'hbp', 'sb', 'cs', 'avg', 'obp','slg','','','','','','fg_id']
         self.read_projection_csv(filename, 'steamer', 2014, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=helper.batter_post_processor,
                                  verbose=verbose)
@@ -474,7 +627,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'h', 'er', 'hr', 'k', 'bb', 'whip', '', '', '', '', 'fg_id'] 
         self.read_projection_csv(filename, 'steamer', 2014, 
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=helper.pitcher_post_processor,
                                  verbose=verbose)
