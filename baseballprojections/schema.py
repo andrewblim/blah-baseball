@@ -53,7 +53,7 @@ class Player(Base):
 
         batter_projections  = sorted(self.batter_projections, 
                                      key=lambda x: (x.projection_system.name, x.projection_system.year))
-        pitcher_projections = sorted(self.projections, 
+        pitcher_projections = sorted(self.pitcher_projections, 
                                      key=lambda x: (x.projection_system.name, x.projection_system.year))
 
         if len(batter_projections) > 0:
@@ -70,6 +70,8 @@ class Player(Base):
                 statline += (' %3d' % proj.rbi) if proj.rbi is not None else ' ---'
                 statline += (' %3d' % proj.sb) if proj.sb is not None else ' ---'
                 print(statline)
+        else:
+            print('No batter projections')
 
         if len(pitcher_projections) > 0:
             print('%26s : %3s %3s %5s %3s %5s %5s' % \
@@ -84,6 +86,8 @@ class Player(Base):
                 statline += (' %5.3f' % proj.whip) if proj.whip is not None else ' -----'
                 statline += (' %5.1f' % proj.ip) if proj.ip is not None else ' -----'
                 print(statline)
+        else:
+            print('No pitcher projections')
 
     @classmethod
     def id_fields(cls):
@@ -123,7 +127,6 @@ class BatterProjection(Base):
 
     team = Column(String(3))
 
-    age  = Column(Float)
     g    = Column(Float)
     ab   = Column(Float)
     pa   = Column(Float)

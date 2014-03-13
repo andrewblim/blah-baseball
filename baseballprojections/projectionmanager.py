@@ -63,6 +63,16 @@ class ProjectionManager(object):
         self.session.commit()
 
 
+    def find_player(self, **kwargs):
+
+        id_clauses = [ (getattr(Player, k) == kwargs[k])
+                       for k in Player.id_fields() 
+                       if (k in kwargs and kwargs[k] != '' and kwargs[k] is not None) ]
+
+        if len(id_clauses) > 0:
+            return self.query(Player).filter(or_(*id_clauses)).all()
+        return []
+
 
     def add_or_update_player(self, overwrite=False, 
                              **kwargs):
@@ -71,14 +81,8 @@ class ProjectionManager(object):
         matching ids, populate any missing fields (overwrite=False) or 
         overwrite whatever values they might have (overwrite=True). 
         """
-
-        id_clauses = [ (getattr(Player, k) == kwargs[k])
-                       for k in Player.id_fields() 
-                       if (k in kwargs and kwargs[k] != '' and kwargs[k] is not None) ]
         
-        matches = []
-        if len(id_clauses) > 0:
-            matches = self.query(Player).filter(or_(*id_clauses)).all()
+        matches = self.find_player(**kwargs)
 
         match = None
         if len(matches) > 1:
@@ -108,7 +112,6 @@ class ProjectionManager(object):
             projection_system = ProjectionSystem(name=name, year=year, 
                                                  is_actual=is_actual)
             self.session.add(projection_system)
-#            self.session.commit()
         return projection_system
 
     def add_batter_projection(self, **kwargs):
@@ -117,7 +120,6 @@ class ProjectionManager(object):
         """
         projection = BatterProjection(**kwargs)
         self.session.add(projection)
-#        self.session.commit()
         return projection
 
     def add_pitcher_projection(self, **kwargs):
@@ -126,35 +128,43 @@ class ProjectionManager(object):
         """
         projection = PitcherProjection(**kwargs)
         self.session.add(projection)
- #       self.session.commit()
         return projection
 
     def read_projection_csv(self, filename, projection_name, years, is_actual,
                             projection_type, header_row, post_processor=None, 
                             skip_rows=1, verbose=False):
 
-        if player_type not in ('batter', 'pitcher'):
-            raise Exception('player_type is %s, must be either '\
+        if projection_type not in ('batter', 'pitcher'):
+            raise Exception('projection_type is %s, must be either '\
                             '"batter" or "pitcher"' % player_type)
+
+        # years can either be a scalar or an iterable
+        # if an iterable, you will have to specify a 'year' column in the data
+        # indicating what year's projection each row belongs to
 
         try:
             years = iter(years)
         except TypeError:
             years = iter([years])
-        for year in years:
-            projection_system = self.add_or_update_projection_system('%s' % projection_name, 
-                                                                     year, 
-                                                                     is_actual)
+
+        projection_systems = { int(year): self.add_or_update_projection_system(projection_name, year, is_actual)
+                               for year in years }
+
+        if len(projection_systems) == 0:
+            raise Exception('No projection systems were created (did you specify years?)')
+        elif len(projection_systems) == 1:
+            year, projection_system = list(projection_system.items())[0]
+            single_projection_system = True
+        else:
+            single_projection_system = False
         
         reader = csv.reader(open(filename, 'r'))
         for i in range(skip_rows):
             next(reader)
         n = len(header_row)
 
-        add_player_args = getSQLAlchemyFields(Player)
-        add_batter_args = getSQLAlchemyFields(Batter)
-        add_pitcher_args = getSQLAlchemyFields(Pitcher)
-        add_batter_projection_args = getSQLAlchemyFields(BatterProjection)
+        add_player_args             = getSQLAlchemyFields(Player)
+        add_batter_projection_args  = getSQLAlchemyFields(BatterProjection)
         add_pitcher_projection_args = getSQLAlchemyFields(PitcherProjection)
 
         count = 0
@@ -168,56 +178,44 @@ class ProjectionManager(object):
             if post_processor is not None:
                 data = post_processor(data)
 
+            if not single_projection_system:
+                try: 
+                    year = int(data['year'])
+                except KeyError:
+                    print('Unable to get year column out of data:')
+                    print(data)
+                    continue
+                try:
+                    projection_system = projection_systems[year]
+                except KeyError:
+                    print('Unable to find projection system for %d, was it specified in years?' % year)
+                    continue
 
-            if player_type == 'batter':
-                player_data = { x: data[x] for x in add_batter_args if x in data }
-                player_data['player_type'] = 'batter'
-                try:
-                    player = self.add_or_update_player(**player_data)
-                    if player is None:
-                        if verbose or (('mlb_id' in data or 'fg_id' in data) and data['pa']>10):
-                            print('Player not matched:')
-                            print(player_data)
-                    else:
-                        projection_data = { x: data[x] for x in add_batter_projection_args
-                                            if x in data }
-                        projection_data['batter_id'] = player.id
-                        projection_data['projection_system_id'] = projection_system.id
-                        projection = self.add_batter_projection(**projection_data)
-                except Exception as e:
-                        print(data)
-                        print(e)
+            player_data = { x: data[x] for x in add_player_args if x in data }
+            player_matches = self.find_player(**player_data)
 
-            elif player_type == 'pitcher':
-                player_data = { x: data[x] for x in add_pitcher_args if x in data }
-                player_data['player_type'] = 'pitcher'
-                try:
-                    player = self.add_or_update_player(**player_data)
-                    if player is None:
-                        if verbose or (('mlb_id' in data or 'fg_id' in data) and data['ip']>5):
-                            print('Player not matched:')
-                            print(player_data)
-                    else:
-                        projection_data = { x: data[x] for x in add_pitcher_projection_args
-                                            if x in data }
-                        projection_data['pitcher_id'] = player.id
-                        projection_data['projection_system_id'] = projection_system.id
-                        projection = self.add_pitcher_projection(**projection_data)
-                except Exception as e:
-                        print(data)
-                        print(e)
-                        
-            elif player_type == 'all':
-                player_data = { x: data[x] for x in add_player_args if x in data }
-                player_data['player_type'] = 'all'
-                try:
-                    player = self.add_or_update_player(**player_data)
-                except Exception as e:
-                        print(e)
-                        
-            if verbose and (player is not None) and (projection is not None):
-                #print('%s, %s' % (player, projection))
-                print('%s',player)
+            if len(player_matches) == 1:
+                player = player_matches[0]
+                if projection_type == 'batter':
+                    projection_data = { x: data[x] for x in add_batter_projection_args if x in data }
+                    projection_data['player_id'] = player.id
+                    projection_data['projection_system_id'] = projection_system.id
+                    projection = self.add_batter_projection(**projection_data)
+                else:
+                    projection_data = { x: data[x] for x in add_pitcher_projection_args if x in data }
+                    projection_data['player_id'] = player.id
+                    projection_data['projection_system_id'] = projection_system.id
+                    projection = self.add_pitcher_projection(**projection_data)
+                if verbose and (player is not None) and (projection is not None):
+                    print('%s (%d)' % (player, year))
+
+            elif len(player_matches) > 1:
+                print('Multiple players found for the following player data, nothing added')
+                print(projection_system)
+                print(player_data)
+            else:
+                print('No players found matching the following player data, nothing added')
+                print(player_data)
 
             count = count+1
             if count % 1000 == 0:

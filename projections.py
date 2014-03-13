@@ -98,9 +98,9 @@ class MyProjectionManager(pm.ProjectionManager):
         fg_batter_header = \
             [
             'year', 
-            'full_name', 
+            '',     # skip full name 
             'team',
-            'age',
+            '',     # skip age
             'g',
             'ab',
             'pa',
@@ -302,28 +302,16 @@ class MyProjectionManager(pm.ProjectionManager):
             '',     # skip age range
             'off',
             'lg',
-            'fangraphs_id',
+            'fg_id',
             ]
 
-        self.read_projection_csv(os.path.join(base_dir, 'filename'), 
+        self.read_projection_csv(os.path.join(base_dir, filename), 
                                  'actual', 
                                  range(2004, 2014), 
                                  is_actual=True, 
                                  projection_type='batter', 
                                  header_row=fg_batter_header,
                                  post_processor=helper.batter_post_processor, 
-                                 verbose=verbose)
-
-
-    def read_actuals_pitchers_2011(self, filename, verbose=False):
-
-        header_row = ['full_name', 'team', 'w', 'sv', 'g', 'gs', 'ip', 
-                      'era', 'k9', 'h', 'bb', 'fg_id', 'rookie']
-        self.read_projection_csv(filename, 'actual', 2011,
-                                 is_actual=True,
-                                 projection_type='pitcher',
-                                 header_row=header_row, 
-                                 post_processor=actual_pitcher_post_processor,
                                  verbose=verbose)
 
 
