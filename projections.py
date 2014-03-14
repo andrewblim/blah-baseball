@@ -13,67 +13,73 @@ class MyProjectionManager(pm.ProjectionManager):
             print('Reading Chadwick Register...')
             self.read_register(os.path.join(base_dir, 'register.csv'), verbose=verbose)
 
-        print('Reading PECOTA 2011...')
-        self.read_pecota_batters_2011(os.path.join(base_dir, 'PecotaHitters2011.csv'), verbose=verbose)
-        self.read_pecota_pitchers_2011(os.path.join(base_dir, 'Pecota Pitchers 2011.csv'), verbose=verbose)
+        print('Reading Fangraphs batting actuals, 2004-2013...')
+        self.read_fangraphs_batters(os.path.join(base_dir, 'FanGraphs Actual Batting 2004-2013.csv'), verbose=verbose)
 
-        print('Reading PECOTA 2012...')
-        self.read_pecota_batters_2012(os.path.join(base_dir, 'PecotaHitters2012.csv'), verbose=verbose)
-        self.read_pecota_pitchers_2012(os.path.join(base_dir, 'Pecota Pitchers 2012.csv'), verbose=verbose)
+        print('Reading Fangraphs pitching actuals, 2004-2013...')
+        self.read_fangraphs_pitchers(os.path.join(base_dir, 'FanGraphs Actual Pitching 2004-2013.csv'), verbose=verbose)
+
+        # print('Reading PECOTA 2011...')
+        # self.read_pecota_batters_2011(os.path.join(base_dir, 'PecotaHitters2011.csv'), verbose=verbose)
+        # self.read_pecota_pitchers_2011(os.path.join(base_dir, 'Pecota Pitchers 2011.csv'), verbose=verbose)
+
+        # print('Reading PECOTA 2012...')
+        # self.read_pecota_batters_2012(os.path.join(base_dir, 'PecotaHitters2012.csv'), verbose=verbose)
+        # self.read_pecota_pitchers_2012(os.path.join(base_dir, 'Pecota Pitchers 2012.csv'), verbose=verbose)
         
-        print('Reading PECOTA 2013...')
-        self.read_pecota_batters_2013(os.path.join(base_dir, 'PecotaHitters2013.csv'),verbose=verbose)
-        self.read_pecota_pitchers_2013(os.path.join(base_dir, 'Pecota Pitchers 2013.csv'), verbose=verbose)
+        # print('Reading PECOTA 2013...')
+        # self.read_pecota_batters_2013(os.path.join(base_dir, 'PecotaHitters2013.csv'),verbose=verbose)
+        # self.read_pecota_pitchers_2013(os.path.join(base_dir, 'Pecota Pitchers 2013.csv'), verbose=verbose)
 
-        print('Reading PECOTA 2014...')
-        self.read_pecota_batters_2014(os.path.join(base_dir, 'PecotaHitters2014.csv'),verbose=verbose)
-        self.read_pecota_pitchers_2014(os.path.join(base_dir, 'Pecota Pitchers 2014.csv'), verbose=verbose)
-        self.read_pecota_pfm_2014(os.path.join(base_dir, 'BP_PFM_2014.csv'),verbose=verbose)
+        # print('Reading PECOTA 2014...')
+        # self.read_pecota_batters_2014(os.path.join(base_dir, 'PecotaHitters2014.csv'),verbose=verbose)
+        # self.read_pecota_pitchers_2014(os.path.join(base_dir, 'Pecota Pitchers 2014.csv'), verbose=verbose)
+        # self.read_pecota_pfm_2014(os.path.join(base_dir, 'BP_PFM_2014.csv'),verbose=verbose)
 
-        print('Reading Steamer 2011...')
-        self.read_steamer_batters_2011(os.path.join(base_dir, 'SteamerHitters2011.csv'), verbose=verbose)
-        self.read_steamer_pitchers_2011(os.path.join(base_dir, 'Steamer Pitchers 2011.csv'), verbose=verbose)
+        # print('Reading Steamer 2011...')
+        # self.read_steamer_batters_2011(os.path.join(base_dir, 'SteamerHitters2011.csv'), verbose=verbose)
+        # self.read_steamer_pitchers_2011(os.path.join(base_dir, 'Steamer Pitchers 2011.csv'), verbose=verbose)
 
-        print('Reading Steamer 2012...')
-        self.read_steamer_batters_2012(os.path.join(base_dir, 'SteamerHitters2012.csv'), verbose=verbose)
-        self.read_steamer_pitchers_2012(os.path.join(base_dir, 'Steamer Pitchers 2012.csv'), verbose=verbose)
+        # print('Reading Steamer 2012...')
+        # self.read_steamer_batters_2012(os.path.join(base_dir, 'SteamerHitters2012.csv'), verbose=verbose)
+        # self.read_steamer_pitchers_2012(os.path.join(base_dir, 'Steamer Pitchers 2012.csv'), verbose=verbose)
 
-        print('Reading Steamer 2013...')
-        self.read_steamer_batters_2013(os.path.join(base_dir, 'SteamerHitters2013.csv'), verbose=verbose)
-        self.read_steamer_pitchers_2013(os.path.join(base_dir, 'Steamer Pitchers 2013.csv'), verbose=verbose)
+        # print('Reading Steamer 2013...')
+        # self.read_steamer_batters_2013(os.path.join(base_dir, 'SteamerHitters2013.csv'), verbose=verbose)
+        # self.read_steamer_pitchers_2013(os.path.join(base_dir, 'Steamer Pitchers 2013.csv'), verbose=verbose)
 
-        print('Reading Steamer 2014...')
-        self.read_steamer_batters_2014(os.path.join(base_dir, 'SteamerHitters2014.csv'), verbose=verbose)
-        self.read_steamer_pitchers_2014(os.path.join(base_dir, 'Steamer Pitchers 2014.csv'), verbose=verbose)
+        # print('Reading Steamer 2014...')
+        # self.read_steamer_batters_2014(os.path.join(base_dir, 'SteamerHitters2014.csv'), verbose=verbose)
+        # self.read_steamer_pitchers_2014(os.path.join(base_dir, 'Steamer Pitchers 2014.csv'), verbose=verbose)
 
 
-        print('Reading ZIPS 2011...')
-        self.read_zips_batters_2011(os.path.join(base_dir, 'ZIPSHitters2011.csv'), verbose=verbose)
-        self.read_zips_pitchers_2011(os.path.join(base_dir, 'ZIPS Pitchers 2011.csv'), verbose=verbose)
+        # print('Reading ZIPS 2011...')
+        # self.read_zips_batters_2011(os.path.join(base_dir, 'ZIPSHitters2011.csv'), verbose=verbose)
+        # self.read_zips_pitchers_2011(os.path.join(base_dir, 'ZIPS Pitchers 2011.csv'), verbose=verbose)
 
-        print('Reading ZIPS 2012...')
-        self.read_zips_batters_2012(os.path.join(base_dir, 'ZIPSHitters2012.csv'), verbose=verbose)
-        self.read_zips_pitchers_2012(os.path.join(base_dir, 'ZIPS Pitchers 2012.csv'), verbose=verbose)
+        # print('Reading ZIPS 2012...')
+        # self.read_zips_batters_2012(os.path.join(base_dir, 'ZIPSHitters2012.csv'), verbose=verbose)
+        # self.read_zips_pitchers_2012(os.path.join(base_dir, 'ZIPS Pitchers 2012.csv'), verbose=verbose)
 
-        print('Reading ZIPS 2013...')
-        self.read_zips_batters_2013(os.path.join(base_dir, 'ZIPSHitters2013.csv'), verbose=verbose)
-        self.read_zips_pitchers_2013(os.path.join(base_dir, 'ZIPS Pitchers 2013.csv'), verbose=verbose)
+        # print('Reading ZIPS 2013...')
+        # self.read_zips_batters_2013(os.path.join(base_dir, 'ZIPSHitters2013.csv'), verbose=verbose)
+        # self.read_zips_pitchers_2013(os.path.join(base_dir, 'ZIPS Pitchers 2013.csv'), verbose=verbose)
 
-        print('Reading ZIPS 2014...')
-        self.read_zips_batters_2014(os.path.join(base_dir, 'ZipsHitters2014.csv'), verbose=verbose)
-        self.read_zips_pitchers_2014(os.path.join(base_dir, 'ZIPS Pitchers 2014.csv'), verbose=verbose)
+        # print('Reading ZIPS 2014...')
+        # self.read_zips_batters_2014(os.path.join(base_dir, 'ZipsHitters2014.csv'), verbose=verbose)
+        # self.read_zips_pitchers_2014(os.path.join(base_dir, 'ZIPS Pitchers 2014.csv'), verbose=verbose)
 
-        print('Reading Actuals 2011...')
-        self.read_actuals_batters_2011(os.path.join(base_dir, 'ActualsHitters2011.csv'), verbose=verbose)
-        self.read_actuals_pitchers_2011(os.path.join(base_dir, 'ActualsPitchers2011.csv'), verbose=verbose)
+        # print('Reading Actuals 2011...')
+        # self.read_actuals_batters_2011(os.path.join(base_dir, 'ActualsHitters2011.csv'), verbose=verbose)
+        # self.read_actuals_pitchers_2011(os.path.join(base_dir, 'ActualsPitchers2011.csv'), verbose=verbose)
 
-        print('Reading Actuals 2012...')
-        self.read_actuals_batters_2012(os.path.join(base_dir, 'ActualsHitters2012.csv'), verbose=verbose)
-        self.read_actuals_pitchers_2012(os.path.join(base_dir, 'ActualsPitchers2012.csv'), verbose=verbose)
+        # print('Reading Actuals 2012...')
+        # self.read_actuals_batters_2012(os.path.join(base_dir, 'ActualsHitters2012.csv'), verbose=verbose)
+        # self.read_actuals_pitchers_2012(os.path.join(base_dir, 'ActualsPitchers2012.csv'), verbose=verbose)
 
-        print('Reading Actuals 2013...')
-        self.read_actuals_batters_2013(os.path.join(base_dir, 'ActualsHitters2013.csv'), verbose=verbose)
-        self.read_actuals_pitchers_2013(os.path.join(base_dir, 'ActualsPitchers2013.csv'), verbose=verbose)
+        # print('Reading Actuals 2013...')
+        # self.read_actuals_batters_2013(os.path.join(base_dir, 'ActualsHitters2013.csv'), verbose=verbose)
+        # self.read_actuals_pitchers_2013(os.path.join(base_dir, 'ActualsPitchers2013.csv'), verbose=verbose)
 
 
     # This reads the Chadwick register, to load up all the IDs.
@@ -312,6 +318,238 @@ class MyProjectionManager(pm.ProjectionManager):
                                  projection_type='batter', 
                                  header_row=fg_batter_header,
                                  post_processor=helper.batter_post_processor, 
+                                 verbose=verbose)
+
+    def read_fangraphs_pitchers(self, filename, verbose=False):
+
+        fg_pitcher_header = \
+            ['year', 
+            'full_name', 
+            'team',
+            '',     # skip age
+            'w',
+            'l',
+            'era',
+            'g',
+            'gs',
+            'cg',
+            'sho',
+            'sv',
+            'bs',
+            'ip',
+            'tbf',
+            'h',
+            'r',
+            'er',
+            'hr',
+            'bb',
+            'ibb',
+            'hbp',
+            'wp',
+            'bk',
+            'k',
+            'gb',
+            'fb',
+            'ld',
+            'iffb',
+            'balls',
+            'strikes',
+            'pitches',
+            'rs',
+            'ifh',
+            'bu',
+            'buh',
+            'k9',
+            'bb9',
+            'k_bb',
+            'h9',
+            'hr9',
+            'avg',
+            'whip',
+            'babip',
+            'lob_pct',
+            'fip',
+            'gb_fb',
+            'ld_pct',
+            'gb_pct',
+            'fb_pct',
+            'iffb_pct',
+            'hr_fb',
+            'ifh_pct',
+            'buh_pct',
+            'starting',
+            'start_ip',
+            'relieving',
+            'relief_ip',
+            'rar',
+            'war',
+            '',         # skip dollars
+            'tera',
+            'xfip',
+            'wpa',
+            'wpa_minus',
+            'wpa_plus',
+            're24',
+            'rew',
+            'pli',
+            'inli',
+            'gmli',
+            'exli',
+            'pulls',
+            'wpali',
+            'clutch',
+            'fb_pct',
+            'fbv',
+            'sl_pct',
+            'slv',
+            'ct_pct',
+            'ctv',
+            'cb_pct',
+            'cbv',
+            'ch_pct',
+            'chv',
+            'sf_pct',
+            'sfv',
+            'kn_pct',
+            'knv',
+            'xx_pct',
+            'po_pct',
+            'wfb',
+            'wsl',
+            'wct',
+            'wcb',
+            'wch',
+            'wsf',
+            'wkn',
+            'wfbc',
+            'wslc',
+            'wctc',
+            'wcbc',
+            'wchc',
+            'wsfc',
+            'wknc',
+            'oswing_pct',
+            'zswing_pct',
+            'swing_pct',
+            'ocontact_pct',
+            'zcontact_pct',
+            'contact_pct',
+            'zone_pct',
+            'fstrike_pct',
+            'swstr_pct',
+            'hld',
+            'sd',
+            'md',
+            'era_minus',
+            'fip_minus',
+            'xfip_minus',
+            'k_pct',
+            'bb_pct',
+            'siera',
+            'rs9',
+            'ef',
+            'fa_pct_pfx',
+            'ft_pct_pfx',
+            'fc_pct_pfx',
+            'fs_pct_pfx',
+            'fo_pct_pfx',
+            'si_pct_pfx',
+            'sl_pct_pfx',
+            'cu_pct_pfx',
+            'kc_pct_pfx',
+            'ep_pct_pfx',
+            'ch_pct_pfx',
+            'sc_pct_pfx',
+            'kn_pct_pfx',
+            'un_pct_pfx',
+            'vfa_pfx',
+            'vft_pfx',
+            'vfc_pfx',
+            'vfs_pfx',
+            'vfo_pfx',
+            'vsi_pfx',
+            'vsl_pfx',
+            'vcu_pfx',
+            'vkc_pfx',
+            'vep_pfx',
+            'vch_pfx',
+            'vsc_pfx',
+            'vkn_pfx',
+            'fa_x_pfx',
+            'ft_x_pfx',
+            'fc_x_pfx',
+            'fs_x_pfx',
+            'fo_x_pfx',
+            'si_x_pfx',
+            'sl_x_pfx',
+            'cu_x_pfx',
+            'kc_x_pfx',
+            'ep_x_pfx',
+            'ch_x_pfx',
+            'sc_x_pfx',
+            'kn_x_pfx',
+            'fa_z_pfx',
+            'ft_z_pfx',
+            'fc_z_pfx',
+            'fs_z_pfx',
+            'fo_z_pfx',
+            'si_z_pfx',
+            'sl_z_pfx',
+            'cu_z_pfx',
+            'kc_z_pfx',
+            'ep_z_pfx',
+            'ch_z_pfx',
+            'sc_z_pfx',
+            'kn_z_pfx',
+            'wfa_pfx',
+            'wft_pfx',
+            'wfc_pfx',
+            'wfs_pfx',
+            'wfo_pfx',
+            'wsi_pfx',
+            'wsl_pfx',
+            'wcu_pfx',
+            'wkc_pfx',
+            'wep_pfx',
+            'wch_pfx',
+            'wsc_pfx',
+            'wkn_pfx',
+            'wfa_c_pfx',
+            'wft_c_pfx',
+            'wfc_c_pfx',
+            'wfs_c_pfx',
+            'wfo_c_pfx',
+            'wsi_c_pfx',
+            'wsl_c_pfx',
+            'wcu_c_pfx',
+            'wkc_c_pfx',
+            'wep_c_pfx',
+            'wch_c_pfx',
+            'wsc_c_pfx',
+            'wkn_c_pfx',
+            'oswing_pct_pfx',
+            'zswing_pct_pfx',
+            'swing_pct_pfx',
+            'ocontact_pct_pfx',
+            'zcontact_pct_pfx',
+            'contact_pct_pfx',
+            'zone_pct_pfx',
+            'pace',
+            'ra9_war',
+            'bip_wins',
+            'lob_wins',
+            'fdp_wins',
+            '',         # skip age range
+            'fg_id'
+            ]
+
+        self.read_projection_csv(os.path.join(base_dir, filename), 
+                                 'actual', 
+                                 range(2004, 2014), 
+                                 is_actual=True, 
+                                 projection_type='pitcher', 
+                                 header_row=fg_pitcher_header,
+                                 post_processor=helper.pitcher_post_processor, 
                                  verbose=verbose)
 
 

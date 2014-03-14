@@ -92,7 +92,7 @@ class ProjectionManager(object):
             for field, value in kwargs.items():
                 if overwrite or getattr(match, field) is None or getattr(match, field) == '':
                     setattr(match, field, value)
-        elif len(id_clauses) > 0:
+        else:
             match = Player(**kwargs)
             self.session.merge(match)
 
@@ -216,6 +216,8 @@ class ProjectionManager(object):
             else:
                 print('No players found matching the following player data, nothing added')
                 print(player_data)
+                print(data)
+                raise
 
             count = count+1
             if count % 1000 == 0:

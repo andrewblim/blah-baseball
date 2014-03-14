@@ -45,6 +45,23 @@ class Player(Base):
     def age(self, from_date=datetime.date.today()):
         return (from_date - self.birthdate)
 
+    def get_projection(self, projection_type, projection_name=None, year=None):
+
+        if projection_type == 'batter':
+            projections = self.batter_projections
+        elif projection_type == 'pitcher':
+            projections = self.pitcher_projections
+        else:
+            raise "projection_type was %s, must be 'batter' or 'pitcher'" % projection_type
+
+        matches = [proj for proj in projections
+                   if (projection_name is None or proj.projection_system.name == projection_name)
+                   and (year is None or proj.projection_system.year == year)]
+        if len(matches) == 1:
+            return matches[0]
+        else:
+            return matches
+
     def prettyprint(self):
 
         print('%s, %s (id: %d, FG ID: %s)' % \
@@ -372,7 +389,6 @@ class PitcherProjection(Base):
 
     team = Column(String(3))
 
-    age = Column(Float)
     w   = Column(Float)
     l   = Column(Float)
     era = Column(Float)
