@@ -153,7 +153,7 @@ class ProjectionManager(object):
         if len(projection_systems) == 0:
             raise Exception('No projection systems were created (did you specify years?)')
         elif len(projection_systems) == 1:
-            year, projection_system = list(projection_system.items())[0]
+            year, projection_system = list(projection_systems.items())[0]
             single_projection_system = True
         else:
             single_projection_system = False
@@ -217,7 +217,6 @@ class ProjectionManager(object):
                 print('No players found matching the following player data, nothing added')
                 print(player_data)
                 print(data)
-                raise
 
             count = count+1
             if count % 1000 == 0:
