@@ -15,7 +15,6 @@ class MyProjectionManager(pm.ProjectionManager):
 
         print('Reading Fangraphs batting actuals, 2004-2013...')
         self.read_fangraphs_batters(os.path.join(base_dir, 'FanGraphs Actual Batting 2004-2013.csv'), verbose=verbose)
-
         print('Reading Fangraphs pitching actuals, 2004-2013...')
         self.read_fangraphs_pitchers(os.path.join(base_dir, 'FanGraphs Actual Pitching 2004-2013.csv'), verbose=verbose)
 
@@ -34,9 +33,11 @@ class MyProjectionManager(pm.ProjectionManager):
         print('Reading PECOTA pitching 2013...')
         self.read_pecota_pitchers_2013(os.path.join(base_dir, 'Pecota Pitchers 2013.csv'), verbose=verbose)
 
-        # print('Reading PECOTA 2014...')
-        # self.read_pecota_batters_2014(os.path.join(base_dir, 'PecotaHitters2014.csv'),verbose=verbose)
-        # self.read_pecota_pitchers_2014(os.path.join(base_dir, 'Pecota Pitchers 2014.csv'), verbose=verbose)
+        print('Reading PECOTA 2014 batting...')
+        self.read_pecota_batters_2014(os.path.join(base_dir, 'PecotaHitters2014.csv'),verbose=verbose)
+        print('Reading PECOTA 2014 pitching...')
+        self.read_pecota_pitchers_2014(os.path.join(base_dir, 'Pecota Pitchers 2014.csv'), verbose=verbose)
+
         # self.read_pecota_pfm_2014(os.path.join(base_dir, 'BP_PFM_2014.csv'),verbose=verbose)
 
         print('Reading Steamer batting 2011...')
@@ -54,28 +55,30 @@ class MyProjectionManager(pm.ProjectionManager):
         print('Reading Steamer pitching 2013...')
         self.read_steamer_pitchers_2013(os.path.join(base_dir, 'Steamer Pitchers 2013.csv'), verbose=verbose)
 
-        print('Reading Steamer 2014...')
+        print('Reading Steamer batting 2014...')
         self.read_steamer_batters_2014(os.path.join(base_dir, 'SteamerHitters2014.csv'), verbose=verbose)
+        print('Reading Steamer pitching 2014...')
         self.read_steamer_pitchers_2014(os.path.join(base_dir, 'Steamer Pitchers 2014.csv'), verbose=verbose)
 
-        # print('Reading ZIPS batting 2011...')
-        # self.read_zips_batters_2011(os.path.join(base_dir, 'ZipsHitters2011.csv'), verbose=verbose)
-        # print('Reading ZIPS pitching 2011...')
-        # self.read_zips_pitchers_2011(os.path.join(base_dir, 'ZIPS Pitchers 2011.csv'), verbose=verbose)
+        print('Reading ZIPS batting 2011...')
+        self.read_zips_batters_2011(os.path.join(base_dir, 'ZipsHitters2011.csv'), verbose=verbose)
+        print('Reading ZIPS pitching 2011...')
+        self.read_zips_pitchers_2011(os.path.join(base_dir, 'ZIPS Pitchers 2011.csv'), verbose=verbose)
 
-        # print('Reading ZIPS batting 2012...')
-        # self.read_zips_batters_2012(os.path.join(base_dir, 'ZipsHitters2012.csv'), verbose=verbose)
-        # print('Reading ZIPS pitching 2012...')
-        # self.read_zips_pitchers_2012(os.path.join(base_dir, 'ZIPS Pitchers 2012.csv'), verbose=verbose)
+        print('Reading ZIPS batting 2012...')
+        self.read_zips_batters_2012(os.path.join(base_dir, 'ZipsHitters2012.csv'), verbose=verbose)
+        print('Reading ZIPS pitching 2012...')
+        self.read_zips_pitchers_2012(os.path.join(base_dir, 'ZIPS Pitchers 2012.csv'), verbose=verbose)
 
-        # print('Reading ZIPS batting 2013...')
-        # self.read_zips_batters_2013(os.path.join(base_dir, 'ZipsHitters2013.csv'), verbose=verbose)
-        # print('Reading ZIPS pitching 2013...')
-        # self.read_zips_pitchers_2013(os.path.join(base_dir, 'ZIPS Pitchers 2013.csv'), verbose=verbose)
+        print('Reading ZIPS batting 2013...')
+        self.read_zips_batters_2013(os.path.join(base_dir, 'ZipsHitters2013.csv'), verbose=verbose)
+        print('Reading ZIPS pitching 2013...')
+        self.read_zips_pitchers_2013(os.path.join(base_dir, 'ZIPS Pitchers 2013.csv'), verbose=verbose)
 
-        # print('Reading ZIPS 2014...')
-        # self.read_zips_batters_2014(os.path.join(base_dir, 'ZipsHitters2014.csv'), verbose=verbose)
-        # self.read_zips_pitchers_2014(os.path.join(base_dir, 'ZIPS Pitchers 2014.csv'), verbose=verbose)
+        print('Reading ZIPS batting 2014...')
+        self.read_zips_batters_2014(os.path.join(base_dir, 'ZipsHitters2014.csv'), verbose=verbose)
+        print('Reading ZIPS pitching 2014...')
+        self.read_zips_pitchers_2014(os.path.join(base_dir, 'ZIPS Pitchers 2014.csv'), verbose=verbose)
 
 
     # This reads the Chadwick register, to load up all the IDs.

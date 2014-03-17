@@ -2,6 +2,7 @@ from baseballprojections.helper import getSQLAlchemyFields
 from baseballprojections.schema import *
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import func
 import csv
 import datetime
 import inspect
@@ -69,9 +70,26 @@ class ProjectionManager(object):
                        for k in Player.id_fields() 
                        if (k in kwargs and kwargs[k] != '' and kwargs[k] is not None) ]
 
+        matches = []
+
+        # first try to match just on id clauses
+
         if len(id_clauses) > 0:
-            return self.query(Player).filter(or_(*id_clauses)).all()
-        return []
+            matches = self.query(Player).filter(or_(*id_clauses)).all()
+
+        # if nothing, then try to match on first name/last name AND if the
+        # player has an MLB ID (in general the ones without MLB IDs are not
+        # players we're worried about)
+
+        if len(matches) == 0:
+
+            name_clauses = [ (func.lower(getattr(Player, k)) == kwargs[k])
+                             for k in ['last_name', 'first_name']
+                             if (k in kwargs and kwargs[k] != '' and kwargs[k] is not None) ]
+            if len(name_clauses) > 0:
+                matches = self.query(Player).filter(and_(*name_clauses), Player.mlb_id != None).all()
+
+        return matches
 
 
     def add_or_update_player(self, overwrite=False, 
@@ -211,12 +229,13 @@ class ProjectionManager(object):
 
             elif len(player_matches) > 1:
                 print('Multiple players found for the following player data, nothing added')
-                print(projection_system)
                 print(player_data)
+                print()
             else:
                 print('No players found matching the following player data, nothing added')
                 print(player_data)
                 print(data)
+                print()
 
             count = count+1
             if count % 1000 == 0:
