@@ -1,5 +1,6 @@
 import datetime
 import re
+import string
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 def getSQLAlchemyFields(classname):
@@ -20,7 +21,7 @@ def split_firstname_lastname_space(full_name):
     return (splitname[0].strip(), ' '.join(splitname[1:]).strip())
 
 def simple_name(name):
-    return re.sub(r'\W', '', name).lower()
+    return re.sub(r'[^a-zA-Z0-9]', '', name).lower()
 
 # to see all the teams:
 # sorted(set(map(lambda x: x.team, pm.query(BatterProjection))))

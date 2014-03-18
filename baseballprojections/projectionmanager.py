@@ -57,14 +57,14 @@ class ProjectionManager(object):
                 print('%s', player)
 
             count = count + 1
-            if verbose and count % 1000 == 0:
+            if count % 1000 == 0:
                 print('loaded %d' % count)
                 self.session.commit()
                 
         self.session.commit()
 
 
-    def find_player(self, **kwargs):
+    def find_player(self, soft_match=False, **kwargs):
 
         id_clauses = [ (getattr(Player, k) == kwargs[k])
                        for k in Player.id_fields() 
@@ -78,16 +78,18 @@ class ProjectionManager(object):
             matches = self.query(Player).filter(or_(*id_clauses)).all()
 
         # if nothing, then try to match on first name/last name AND if the
-        # player has an MLB ID (in general the ones without MLB IDs are not
-        # players we're worried about)
+        # player has an MLB ID AND a birthdate AND the birthdate is after 1983
 
-        if len(matches) == 0:
+        if soft_match and len(matches) == 0:
 
             name_clauses = [ (func.lower(getattr(Player, k)) == kwargs[k])
                              for k in ['last_name', 'first_name']
                              if (k in kwargs and kwargs[k] != '' and kwargs[k] is not None) ]
             if len(name_clauses) > 0:
-                matches = self.query(Player).filter(and_(*name_clauses), Player.mlb_id != None).all()
+                matches = self.query(Player).filter(and_(*name_clauses), 
+                                                    Player.mlb_id != None, 
+                                                    Player.birthdate != None,
+                                                    func.strftime('%Y', Player.birthdate) > '1974').all()
 
         return matches
 
@@ -150,7 +152,7 @@ class ProjectionManager(object):
 
     def read_projection_csv(self, filename, projection_name, years, is_actual,
                             projection_type, header_row, post_processor=None, 
-                            skip_rows=1, verbose=False):
+                            skip_rows=1, error_filename=None, verbose=False):
 
         if projection_type not in ('batter', 'pitcher'):
             raise Exception('projection_type is %s, must be either '\
@@ -181,6 +183,10 @@ class ProjectionManager(object):
             next(reader)
         n = len(header_row)
 
+        if error_filename is not None:
+            writer = csv.writer(open(error_filename, 'w'))
+            writer.writerow(header_row)
+
         add_player_args             = getSQLAlchemyFields(Player)
         add_batter_projection_args  = getSQLAlchemyFields(BatterProjection)
         add_pitcher_projection_args = getSQLAlchemyFields(PitcherProjection)
@@ -192,9 +198,9 @@ class ProjectionManager(object):
             player = None
             projection = None
 
-            data = dict(zip(header_row, row[:n]))
+            raw_data = dict(zip(header_row, row[:n]))
             if post_processor is not None:
-                data = post_processor(data)
+                data = post_processor(raw_data)
 
             if not single_projection_system:
                 try: 
@@ -210,7 +216,7 @@ class ProjectionManager(object):
                     continue
 
             player_data = { x: data[x] for x in add_player_args if x in data }
-            player_matches = self.find_player(**player_data)
+            player_matches = self.find_player(soft_match=True, **player_data)
 
             if len(player_matches) == 1:
                 player = player_matches[0]
@@ -231,11 +237,14 @@ class ProjectionManager(object):
                 print('Multiple players found for the following player data, nothing added')
                 print(player_data)
                 print()
+                if error_filename is not None:
+                    writer.writerow(row[:n])
             else:
                 print('No players found matching the following player data, nothing added')
                 print(player_data)
-                print(data)
                 print()
+                if error_filename is not None:
+                    writer.writerow(row[:n])
 
             count = count+1
             if count % 1000 == 0:
