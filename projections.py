@@ -137,9 +137,8 @@ class MyProjectionManager(pm.ProjectionManager):
 
     def read_register(self, filename, verbose=False):
 
-        header_row = ['chadwick_short_id', 'chadwick_id', 
-                      'mlb_id', 'retrosheet_id', 'br_id', 'br_minor_id', 
-                      'bp_id', 'davenport_id', 'fg_id', 'fg_minor_id', 'npb_id', 
+        bats,throws,height,weight,birth_year,birth_month,birth_day
+        header_row = ['mlb_id', 'br_id', 'fg_id', 'fg_minor_id',
                       'last_name', 'first_name', '', '', '', '', 
                       'bats', 'throws', 'height', 'weight', 
                       'birth_year', 'birth_month', 'birth_day']
