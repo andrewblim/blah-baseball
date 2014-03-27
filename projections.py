@@ -966,13 +966,14 @@ class MyProjectionManager(pm.ProjectionManager):
 
 def register_processor(x):
 
-    if x['br_id'] is None or x['br_id']=='':
-        x['br_id'] = x['br_minor_id']
+    # if x['br_id'] is None or x['br_id']=='':
+    #     x['br_id'] = x['br_minor_id']
 
     if x['fg_id'] is None or x['fg_id']=='':
         x['fg_id'] = x['fg_minor_id']
 
-    for id in ['chadwick_id', 'mlb_id', 'fg_id']:
+    # for id in ['chadwick_id', 'mlb_id', 'fg_id']:
+    for id in ['mlb_id', 'fg_id']:
         if x[id] == '': 
             x[id] = None
 
