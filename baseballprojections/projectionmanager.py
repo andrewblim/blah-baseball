@@ -78,7 +78,7 @@ class ProjectionManager(object):
             matches = self.query(Player).filter(or_(*id_clauses)).all()
 
         # if nothing, then try to match on first name/last name AND if the
-        # player has an MLB ID AND a birthdate AND the birthdate is after 1983
+        # player has an MLB ID AND a birthdate AND the birthdate is after 1974
 
         if soft_match and len(matches) == 0:
 
@@ -271,7 +271,7 @@ class ProjectionManager(object):
                  join(BatterProjection).join(ProjectionSystem)
         if filter_clause is not None:
             q = q.filter(filter_clause)
-        q = q.order_by(Batter.id)
+        q = q.order_by(Player.id)
         return itertools.groupby(q, lambda x: x[0])
 
     def pitcher_projection_groups(self, filter_clause=None):
@@ -282,7 +282,7 @@ class ProjectionManager(object):
                  join(PitcherProjection).join(ProjectionSystem)
         if filter_clause is not None:
             q = q.filter(filter_clause)
-        q = q.order_by(Pitcher.id)
+        q = q.order_by(Player.id)
         return itertools.groupby(q, lambda x: x[0])
 
     # Helper functions for the Lasso code
