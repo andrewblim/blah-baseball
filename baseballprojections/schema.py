@@ -627,6 +627,9 @@ class PitcherProjection(Base):
     lob_wins = Column(Float)
     fdp_wins = Column(Float)
 
+    rookie = Column(Integer)
+    dc_fl = Column(String(2))
+
     def __repr__(self):
         return '<PitcherProjection %d (Player %d, ProjectionSystem %d)>' % \
             (self.id, self.player_id, self.projection_system_id)
