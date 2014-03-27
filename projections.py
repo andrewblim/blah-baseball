@@ -222,7 +222,7 @@ class MyProjectionManager(pm.ProjectionManager):
             'pli',
             'phli',
             'ph',
-            'wpa_li',
+            'wpali',
             'clutch',
             'fb_pct',
             'fbv',
