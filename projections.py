@@ -360,7 +360,7 @@ class MyProjectionManager(pm.ProjectionManager):
             'fg_id',
             ]
 
-        self.read_projection_csv(os.path.join(base_dir, filename), 
+        self.read_projection_csv(filename, 
                                  'actual', 
                                  range(2004, 2014), 
                                  is_actual=True, 
@@ -593,7 +593,7 @@ class MyProjectionManager(pm.ProjectionManager):
             'fg_id'
             ]
 
-        self.read_projection_csv(os.path.join(base_dir, filename), 
+        self.read_projection_csv(filename, 
                                  'actual', 
                                  range(2004, 2014), 
                                  is_actual=True, 
