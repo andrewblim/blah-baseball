@@ -113,10 +113,15 @@ def get_dc_var(player_years,proj_years,player_type,pm):
             dcs.append([0])
     return dcs
 
-def standardize(vec, weight):
-    vecvar = numpy.std(vec)
-    if vecvar > 0:
+def standardize(vec, weight, svec=None):
+    if svec is not None:
+        vecvar = numpy.std(svec)
+        vecmean = numpy.mean(svec)
+    else:
+        vecvar = numpy.std(vec)
         vecmean = numpy.mean(vec)
+        
+    if vecvar > 0:
         return (vec - vecmean) / vecvar * weight
     else:
         return vec
