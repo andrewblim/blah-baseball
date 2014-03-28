@@ -143,7 +143,7 @@ class MyProjectionManager(pm.ProjectionManager):
                       'birth_year', 'birth_month', 'birth_day']
         self.read_player_csv(filename, 
                              header_row=header_row, 
-                             post_processor=register_processor,
+                             post_processor=helper.register_processor,
                              verbose=verbose)
 
     # Actuals readers
@@ -963,30 +963,6 @@ class MyProjectionManager(pm.ProjectionManager):
                                  post_processor=helper.pitcher_post_processor,
                                  error_filename=error_filename,
                                  verbose=verbose)
-
-def register_processor(x):
-
-    # if x['br_id'] is None or x['br_id']=='':
-    #     x['br_id'] = x['br_minor_id']
-
-    if x['fg_id'] is None or x['fg_id']=='':
-        x['fg_id'] = x['fg_minor_id']
-
-    # for id in ['chadwick_id', 'mlb_id', 'fg_id']:
-    for id in ['mlb_id', 'fg_id']:
-        if x[id] == '': 
-            x[id] = None
-
-    if (x['birth_year'] is not None and x['birth_day'] is not None and x['birth_month'] is not None and
-        len(x['birth_year'])>0 and len(x['birth_day'])>0 and len(x['birth_month'])>0):
-        strdate= '%s/%s/%s' % (x['birth_month'],x['birth_day'],x['birth_year'])
-        try:
-            x['birthdate']= datetime.datetime.strptime(strdate.rstrip(), '%m/%d/%Y')
-        except Exception as e:
-            print('Error computing birthdate')
-            print(x)
-
-    return x
 
 def pfm_processor(x):
     if 'dollars' in x:
