@@ -58,7 +58,7 @@ class MyProjectionManager(pm.ProjectionManager):
                                        error_filename=os.path.join(base_dir, 'error_pecota_pitching_2014.csv'), 
                                        verbose=verbose)
 
-        # self.read_pecota_pfm_2014(os.path.join(base_dir, 'BP_PFM_2014.csv'),verbose=verbose)
+        self.read_pecota_pfm_2014(os.path.join(base_dir, 'BP_PFM_2014.csv'),verbose=verbose)
 
         print('Reading Steamer batting 2011...')
         self.read_steamer_batters_2011(os.path.join(base_dir, 'SteamerHitters2011.csv'), 
@@ -711,7 +711,7 @@ class MyProjectionManager(pm.ProjectionManager):
 
     def read_pecota_pfm_2014(self, filename, error_filename=None, verbose=False):
 
-        header_row = ['full_name', 'positions', 'mlb_id', '', '', '', '', 'dollars']
+        header_row = ['full_name', 'positions', 'mlb_id', '', '', '', '', '']
         self.read_projection_csv(filename, 'pfm', 2014, 
                                  is_actual=False,
                                  projection_type='batter',
