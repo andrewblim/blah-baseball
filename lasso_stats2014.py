@@ -12,10 +12,10 @@ from baseballprojections.aux_vars import *
 import warnings
 warnings.filterwarnings("ignore",category=DeprecationWarning)
 
-#base_dir = "C:\\Users\\Benjamin\\Dropbox\\Baseball\\CSVs for DB"
+base_dir = "C:\\Users\\Benjamin\\Dropbox\\Baseball\\CSVs for DB"
 #base_dir = "/Users/andrew_lim/Dropbox/Baseball/CSVs for DB"
 
-base_dir = "/Users/bhebert/Dropbox/Baseball/CSVs for DB"
+#base_dir = "/Users/bhebert/Dropbox/Baseball/CSVs for DB"
 
 
 
@@ -27,8 +27,8 @@ pm = MyProjectionManager('sqlite:///projections.db')
 # what coefs get printed to stdout during the run
 print_nonzero_coefs_only = True
 
-player_types = ['batter','pitcher']
-#player_types = ['pitcher']
+#player_types = ['batter','pitcher']
+player_types = ['pitcher']
 #player_types = ['batter']
 playing_times = {'batter':'pa', 'pitcher':'ip'}
 stats = {'batter':['pa', 'ab', 'obp', 'slg', 'sbrate', 'csrate', 'runrate', 'rbirate'],
@@ -42,15 +42,16 @@ all_systems = ['actual','pecota','zips','steamer']
 # For each stat, what is the corresponding playing time stat?
 ptstats = {'pa': None, 'ab': None, 'obp': 'pa', 'slg': 'ab', 'sbrate': 'tob', 'csrate': 'tob',
            'runrate': 'tob', 'rbirate': 'pa', 'g': None, 'gs': None, 'ip': None, 'krate':'ip',
-           'era': 'ip', 'whip': 'ip', 'saverate': 'gr', 'winrate': 'g'}
+           'era': 'ip', 'whip': 'ip', 'saverate': 'g', 'winrate': 'g'}
 
 # model settings
 cv_num = 20
-min_pts ={'batter':150, 'pitcher':40}
+min_pts ={'batter':300, 'pitcher':30}
 use_lars = False
 norm = True
 x2vars = False
 use_gls = True
+max_iter = 20000
 
 # I think this code is broken. The min sample sized
 # needs to be changed to reflect the different pt stats.
@@ -105,7 +106,7 @@ def stat_csrate(p):
         return None
 def stat_saverate(p):
     if p.g is not None and p.gs is not None and (p.g-p.gs) > 0 and p.sv is not None:
-        return p.sv / (p.g-p.gs)
+        return p.sv / p.g
     elif p.g is not None and p.gs is not None and p.sv is not None:
         return 0
     else:
@@ -243,7 +244,7 @@ for player_type in player_types:
     x = numpy.array(ivars)
     x2 = numpy.array(ivars2)
     y = numpy.array(depvars)
-    model_pt = LassoLarsCV(cv=cv_num)
+    model_pt = LassoLarsCV(cv=cv_num,fit_intercept=False)
     model_pt.fit(x,y)
 
     print("Rough PT model, to choose sample")
@@ -294,7 +295,11 @@ for player_type in player_types:
                                         player_type, [ptstat], 
                                         stat_functions)[ptstat]
             pset = pset & set(actualspt.keys())
- 
+
+        else:
+            # If the actuals are missing, count it as zero
+            # for the playing time stats
+            pset = set(projs[stat].keys())
  
         for st in proj_stats:
             pset = pset & set(projs[st].keys())
@@ -324,9 +329,13 @@ for player_type in player_types:
                 systems2 = list(filter(lambda s: not ((st in ['sv','saverate']) and s=='zips'),proj_systems))
                 row.extend(projs[st][pyear][system] for system in systems2)
             ivars[stat].append(row)
-            depvars[stat].append(actuals[pyear]['actual'])
-            if ptstat is not None:
-                ptvars[stat].append(actualspt[pyear]['actual'])
+            if pyear in actuals:
+                depvars[stat].append(actuals[pyear]['actual'])
+                if ptstat is not None:
+                    ptvars[stat].append(actualspt[pyear]['actual'])
+            elif ptstat is None:
+                depvars[stat].append(0)
+            
 
         x = numpy.array(ivars[stat])
         y = numpy.array(depvars[stat])
@@ -379,9 +388,9 @@ for player_type in player_types:
         using_gls = use_gls and ptstat is not None
 
         if use_lars:
-            models[stat] = LassoLarsCV(cv=cv_num, normalize=norm and not using_gls, fit_intercept=not using_gls)
+            models[stat] = LassoLarsCV(cv=cv_num, normalize=norm and not using_gls, fit_intercept=not using_gls, max_iter=max_iter)
         else:
-            models[stat] = LassoCV(cv=cv_num, normalize=norm and not using_gls, fit_intercept=not using_gls)
+            models[stat] = LassoCV(cv=cv_num, normalize=norm and not using_gls, fit_intercept=not using_gls, max_iter =max_iter)
 
         if using_gls:
             pt = numpy.array(ptvars[stat])
@@ -412,6 +421,7 @@ for player_type in player_types:
         #print models[stat].intercept_
 
     ivars2 = {}
+    ivars2_sample = {}
     depvars2 = {}
     ptvars2 = {}
 
@@ -446,36 +456,42 @@ for player_type in player_types:
 
                 pset = pset & set(actualspt.keys())
         else:
-            pset = set(projs[proj_stats[0]].keys())
+            pset = set(projs[stat].keys())
             
         for st in proj_stats:
             pset = pset & set(projs[st].keys())
         player_years2 = list(pset)
 
         player_years = list(filter(lambda k: k in curr_proj_pt and curr_proj_pt[k] > min_pts[player_type], player_years2))
-#        player_years = player_years2
+        #player_years = player_years2
 
+        ivars2_sample[stat] = []
         ivars2[stat] = []
         depvars2[stat] = []
         ptvars2[stat] = []
-        for pyear in player_years:
+        for pyear in player_years2:
             row = []
             for st in proj_stats:
                 systems2 = list(filter(lambda s: not ((st in ['sv','saverate']) and s=='zips'),proj_systems))
                 row.extend(projs[st][pyear][system] for system in systems2)
 
-##            if pyear == '2036_2014':
+##            if pyear == '4751_2014':
 ##                print(row)
 ##                print(len(ivars2[stat]))
-##                print(player_years.index('2036_2014'))
-                
+##                print(player_years2.index('4751_2014'))
+##                
             ivars2[stat].append(row)
-            if rmse_test:
+
+            if rmse_test and pyear in player_years:
                 depvars2[stat].append(actuals[stat][pyear]['actual'])
                 if ptstat is not None:
                     ptvars2[stat].append(actualspt[pyear]['actual'])
+            if pyear in player_years:
+                ivars2_sample[stat].append(row)
+                
      
         x = numpy.array(ivars2[stat])
+        x_sample = numpy.array(ivars2_sample[stat])
 
         if rmse_test:
             y = numpy.array(depvars2[stat])
@@ -484,51 +500,84 @@ for player_type in player_types:
             for st in proj_stats:
                 systems2 = list(filter(lambda s: not ((st in ['sv','saverate']) and s=='zips'),proj_systems))
                 if st == stat:
-                    xproj = x[:,j:j+len(systems2)]
+                    xproj = x_sample[:,j:j+len(systems2)]
                 j = j + len(systems2)
 
-        yrs =     get_year_var(player_years, proj_years)
-        pecota_dc = get_dc_var(player_years, [curr_year],player_type,pm)
+        yrs =     get_year_var(player_years2, proj_years)
+        pecota_dc = get_dc_var(player_years2, [curr_year],player_type,pm)
 
         aux = numpy.hstack((yrs,pecota_dc))
+
+        yrs_sample =     get_year_var(player_years, proj_years)
+        pecota_dc_sample = get_dc_var(player_years, [curr_year],player_type,pm)
+
+        aux_sample = numpy.hstack((yrs_sample,pecota_dc_sample))
+        
         
         if use_rookies:
-            rookies = get_rookie_var(player_years, [curr_year], all_systems, player_type, pm)
+            rookies = get_rookie_var(player_years2, [curr_year], all_systems, player_type, pm)
             aux = numpy.hstack((aux,rookies))
+
+            rookies_sample = get_rookie_var(player_years, [curr_year], all_systems, player_type, pm)
+            aux_sample = numpy.hstack((aux_sample,rookies_sample))
  
         if use_ages:
-            ages =    get_age_var(player_years, [curr_year], 'actual', player_type, pm,-1)
+            ages =    get_age_var(player_years2, [curr_year], 'actual', player_type, pm,-1)
             aux = numpy.hstack((aux,ages))
+
+            ages_sample =    get_age_var(player_years, [curr_year], 'actual', player_type, pm,-1)
+            aux_sample = numpy.hstack((aux_sample,ages_sample))
  
         aux2 = add_quad_interactions(aux)
+
+        aux2_sample = add_quad_interactions(aux_sample)
  
 
         if use_teams:
-            teams   = get_team_vars(player_years, [curr_year], 'actual', player_type, pm)
+            teams   = get_team_vars(player_years2, [curr_year], 'actual', player_type, pm)
             aux2 = numpy.hstack((aux2,teams))
+            
+            teams_sample   = get_team_vars(player_years, [curr_year], 'actual', player_type, pm)
+            aux2_sample = numpy.hstack((aux2_sample,teams_sample))
 
         use_x2vars = x2vars
         #or (special_winrate and stat == 'winrate')
 
         x2 = get_final_regs(x,aux2,-1,use_x2vars)
+        x2_sample = get_final_regs(x_sample,aux2_sample,-1,use_x2vars)
+
 
         using_gls = use_gls and ptstat is not None
 
         if using_gls:
             for j in range(0,len(x2[0])):
-                x2[:,j] = standardize(x2[:,j],1)
+                x2[:,j] = standardize(x2[:,j],1,x2_sample[:,j])
             x2 = numpy.hstack((x2, numpy.ones_like(pecota_dc)))
+
+            for j in range(0,len(x2_sample[0])):
+                x2_sample[:,j] = standardize(x2_sample[:,j],1,x2_sample[:,j])
+            x2_sample = numpy.hstack((x2_sample, numpy.ones_like(pecota_dc_sample)))
 
 
         
         final_stat_proj = models[stat].predict(x2)
-        final_projs[stat] = dict(zip(player_years,final_stat_proj))
+        final_projs[stat] = dict(zip(player_years2,final_stat_proj))
 
+        print(stat + ' mean and std. dev. check')
+        print(numpy.mean(ivars[stat],axis=0))
+        print(numpy.mean(ivars2_sample[stat],axis=0))
+        print(numpy.mean(ivars2[stat],axis=0))
+
+        print(numpy.std(ivars[stat],axis=0))
+        print(numpy.std(ivars2_sample[stat],axis=0))
+        print(numpy.std(ivars2[stat],axis=0))
 
         systems = list(filter(lambda s: not ((stat in ['sv','saverate']) and s=='zips'),proj_systems))
 
         # Don't weight errors for playing-time variables
         if rmse_test:
+
+            final_stat_proj_sample = models[stat].predict(x2_sample)
 
             if ptstat is not None:
                 pt = numpy.array(ptvars2[stat])
@@ -536,13 +585,13 @@ for player_type in player_types:
                 pt = numpy.ones(y.shape)
 
             print()
-            print("Final %s RMSE: %f" % (stat,getRMSE(final_stat_proj,y,pt)))
+            print("Final %s RMSE: %f" % (stat,getRMSE(final_stat_proj_sample,y,pt)))
 
             j = 0
             for sys in systems:
                 if sys == 'pecota' and st in ['pa','ab','g','gs','ip']:
                     temp = xproj[:,j]
-                    xproj[:,j] = numpy.multiply(temp,numpy.squeeze(pecota_dc))
+                    xproj[:,j] = numpy.multiply(temp,numpy.squeeze(pecota_dc_sample))
                 print("%s  %s RMSE: %f" % (sys, stat, getRMSE(xproj[:,j],y,pt)))
                 j = j+1
             
@@ -558,10 +607,10 @@ for player_type in player_types:
         writer = csv.DictWriter(f, cols)
         writer.writeheader()
 
-        player_years.sort(key=lambda k: final_projs[playing_time][k])
-        player_years.reverse()
+        player_years2.sort(key=lambda k: final_projs[playing_time][k])
+        player_years2.reverse()
 
-        for k in player_years:
+        for k in player_years2:
             row = {'fg_id': fg_ids[k] ,
                    'first_name': first_names[k],
                    'last_name': last_names[k],
