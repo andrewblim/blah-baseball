@@ -212,20 +212,25 @@ def batter_post_processor(x,
         try: x['h1b'] = x['h'] - x['h1b'] - x['h2b'] - x['h3b']
         except: pass
 
-    try: x['avg'] = x['h'] / float(x['ab'])
-    except: pass
-    try: x['slg'] = (x['h1b'] + 2*x['h2b'] + 3*x['h3b'] + 4*x['hr']) / float(x['ab'])
-    except: pass
-    try:
-        x['obp'] = (x['h'] + x['bb'] + x['hbp']) / \
+    if 'avg' not in x or x['avg'] is None:
+        try: x['avg'] = x['h'] / float(x['ab'])
+        except: pass
+
+    if 'slg' not in x or x['slg'] is None: 
+        try: x['slg'] = (x['h1b'] + 2*x['h2b'] + 3*x['h3b'] + 4*x['hr']) / float(x['ab'])
+        except: pass
+        
+    if 'obp' not in x or x['obp'] is None:
+        try:
+            x['obp'] = (x['h'] + x['bb'] + x['hbp']) / \
                    float(x['ab'] + x['bb'] + x['hbp'] + x['sf'])
-    except:
-        if try_soft_obp:
-            # technically inexact but should be really close
-            try: x['obp'] = (x['h'] + x['bb'] + x['hbp']) / float(x['pa'])
-            except: pass
-        else: 
-            pass
+        except:
+            if try_soft_obp:
+                # technically inexact but should be really close
+                try: x['obp'] = (x['h'] + x['bb'] + x['hbp']) / float(x['pa'])
+                except: pass
+            else: 
+                pass
 
     return x
 
