@@ -60,6 +60,16 @@ class MyProjectionManager(pm.ProjectionManager):
 
         self.read_pecota_pfm_2014(os.path.join(base_dir, 'BP_PFM_2014.csv'),verbose=verbose)
 
+        print('Reading PECOTA 2015 batting...')
+        self.read_pecota_batters_2015(os.path.join(base_dir, 'PecotaHitters2015.csv'),
+                                      error_filename=os.path.join(base_dir, 'error_pecota_batting_2015.csv'), 
+                                      verbose=verbose)
+        print('Reading PECOTA 2015 pitching...')
+        self.read_pecota_pitchers_2015(os.path.join(base_dir, 'Pecota Pitchers 2015.csv'), 
+                                       error_filename=os.path.join(base_dir, 'error_pecota_pitching_2015.csv'), 
+                                       verbose=verbose)
+
+
         print('Reading Steamer batting 2011...')
         self.read_steamer_batters_2011(os.path.join(base_dir, 'SteamerHitters2011.csv'), 
                                        error_filename=os.path.join(base_dir, 'error_steamer_batting_2011.csv'),
@@ -97,8 +107,12 @@ class MyProjectionManager(pm.ProjectionManager):
                                         verbose=verbose)
 
         print('Reading Steamer 2015...')
-        self.read_steamer_batters_2015(os.path.join(base_dir, 'SteamerHitters2015.csv'), verbose=verbose)
-        self.read_steamer_pitchers_2015(os.path.join(base_dir, 'Steamer Pitchers 2015.csv'), verbose=verbose)
+        self.read_steamer_batters_2015(os.path.join(base_dir, 'SteamerHitters2015.csv'),
+                                       error_filename=os.path.join(base_dir, 'error_steamer_hitting_2015.csv'),
+                                       verbose=verbose)
+        self.read_steamer_pitchers_2015(os.path.join(base_dir, 'Steamer Pitchers 2015.csv'),
+                                        error_filename=os.path.join(base_dir, 'error_steamer_pitching_2015.csv'),
+                                        verbose=verbose)
 
 
         print('Reading ZIPS batting 2011...')
@@ -138,8 +152,12 @@ class MyProjectionManager(pm.ProjectionManager):
                                      verbose=verbose)
 
         print('Reading ZIPS 2015...')
-        self.read_zips_batters_2015(os.path.join(base_dir, 'ZipsHitters2015.csv'), verbose=verbose)
-        self.read_zips_pitchers_2015(os.path.join(base_dir, 'ZIPS Pitchers 2015.csv'), verbose=verbose)
+        self.read_zips_batters_2015(os.path.join(base_dir, 'ZipsHitters2015.csv'),
+                                    error_filename=os.path.join(base_dir, 'error_zips_batting_2015.csv'),
+                                    verbose=verbose)
+        self.read_zips_pitchers_2015(os.path.join(base_dir, 'ZIPS Pitchers 2015.csv'),
+                                     error_filename=os.path.join(base_dir, 'error_zips_pitching_2015.csv'),
+                                     verbose=verbose)
 
 
 
@@ -745,6 +763,21 @@ class MyProjectionManager(pm.ProjectionManager):
                                  error_filename=error_filename,
                                  verbose=verbose)
 
+    def read_pecota_batters_2015(self, filename, error_filename=None, verbose=False):
+
+        header_row = ['bp_id', 'last_name', 'first_name', '', 'positions', '', '', '', '', 
+                      '','team', '', '', '', 'pa', 'ab', 'r', 'h1b', 'h2b', 
+                      'h3b', 'hr', 'h', '', 'rbi', 'bb', 'hbp', 'k', 'sac', 
+                      'sf', '', 'sb', 'cs', '', 'obp', 'slg', '', '', '', '', '', '',
+                      '', '', '', '', '', '', '', '','','','dc_fl','rookie_fl','mlb_id','','']
+        self.read_projection_csv(filename, 'pecota', 2015, 
+                                 is_actual=False,
+                                 projection_type='batter',
+                                 header_row=header_row, 
+                                 post_processor=pecota_rdc_batter_post_processor,
+                                 error_filename=error_filename,
+                                 verbose=verbose)
+
     def read_pecota_pitchers_2014(self, filename, error_filename=None, verbose=False):
 
         header_row = ['bp_id', 'last_name', 'first_name', '', '', '', '', '', 
@@ -752,6 +785,20 @@ class MyProjectionManager(pm.ProjectionManager):
                       'h', 'hr', 'bb', 'hbp','k', '', '', '', '', 'whip', 'era', '', 
                       '', '', '', '', '', '', '', 'dc_fl', 'rookie_fl', 'mlb_id','','']
         self.read_projection_csv(filename, 'pecota', 2014,
+                                 is_actual=False,
+                                 projection_type='pitcher',
+                                 header_row=header_row, 
+                                 post_processor=pecota_rdc_pitcher_post_processor,
+                                 error_filename=error_filename,
+                                 verbose=verbose)
+
+    def read_pecota_pitchers_2015(self, filename, error_filename=None, verbose=False):
+
+        header_row = ['bp_id', 'last_name', 'first_name', '', '', '', '', '', '', 
+                      'team', '', '', '', 'w', 'l', '', 'sv', 'g', 'gs', 'ip', 
+                      'h', 'hr', 'bb', 'hbp','k', '', '', '', '', 'whip', 'era', '', 
+                      '', '', '', '', '', '', '', 'dc_fl', 'rookie_fl', 'mlb_id','','']
+        self.read_projection_csv(filename, 'pecota', 2015,
                                  is_actual=False,
                                  projection_type='pitcher',
                                  header_row=header_row, 
