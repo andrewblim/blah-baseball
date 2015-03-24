@@ -96,6 +96,11 @@ class MyProjectionManager(pm.ProjectionManager):
                                         error_filename=os.path.join(base_dir, 'error_steamer_pitching_2014.csv'),
                                         verbose=verbose)
 
+        print('Reading Steamer 2015...')
+        self.read_steamer_batters_2015(os.path.join(base_dir, 'SteamerHitters2015.csv'), verbose=verbose)
+        self.read_steamer_pitchers_2015(os.path.join(base_dir, 'Steamer Pitchers 2015.csv'), verbose=verbose)
+
+
         print('Reading ZIPS batting 2011...')
         self.read_zips_batters_2011(os.path.join(base_dir, 'ZipsHitters2011.csv'), 
                                     error_filename=os.path.join(base_dir, 'error_zips_batting_2011.csv'),
@@ -131,6 +136,11 @@ class MyProjectionManager(pm.ProjectionManager):
         self.read_zips_pitchers_2014(os.path.join(base_dir, 'ZIPS Pitchers 2014.csv'), 
                                      error_filename=os.path.join(base_dir, 'error_zips_pitching_2014.csv'),
                                      verbose=verbose)
+
+        print('Reading ZIPS 2015...')
+        self.read_zips_batters_2015(os.path.join(base_dir, 'ZipsHitters2015.csv'), verbose=verbose)
+        self.read_zips_pitchers_2015(os.path.join(base_dir, 'ZIPS Pitchers 2015.csv'), verbose=verbose)
+
 
 
     # This reads the Chadwick register, to load up all the IDs.
@@ -829,6 +839,17 @@ class MyProjectionManager(pm.ProjectionManager):
                                  error_filename=error_filename,
                                  verbose=verbose)
 
+    def read_zips_batters_2015(self, filename, verbose=False):
+
+        header_row = ['full_name', 'team','g','pa', 'ab', 'h', 'h2b', 'h3b', 'hr', 
+                      'r','rbi', 'bb', 'k', 'hbp', 'sb', 'cs', 'avg', 'obp','slg','','','','','','fg_id']
+        self.read_projection_csv(filename, 'zips', 2015, 
+                                 is_actual=False,
+                                 player_type='batter',
+                                 header_row=header_row, 
+                                 post_processor=helper.batter_post_processor,
+                                 verbose=verbose)
+
     def read_zips_pitchers_2013(self, filename, error_filename=None, verbose=False):
 
         header_row = ['mlb_id', 'full_name', 'team', '', '', 'w', 'l', 'era', 
@@ -852,6 +873,17 @@ class MyProjectionManager(pm.ProjectionManager):
                                  header_row=header_row, 
                                  post_processor=helper.pitcher_post_processor,
                                  error_filename=error_filename,
+                                 verbose=verbose)
+
+    def read_zips_pitchers_2015(self, filename, verbose=False):
+
+        header_row = [ 'full_name', 'team', 'w', 'l', 'era', 'gs', 'g', 'ip', 
+                      'h', 'er', 'hr', 'k', 'bb', 'whip', '', '', '', '', 'fg_id'] 
+        self.read_projection_csv(filename, 'zips', 2015, 
+                                 is_actual=False,
+                                 player_type='pitcher',
+                                 header_row=header_row, 
+                                 post_processor=helper.pitcher_post_processor,
                                  verbose=verbose)
 
     # Steamer readers
@@ -952,6 +984,17 @@ class MyProjectionManager(pm.ProjectionManager):
                                  error_filename=error_filename,
                                  verbose=verbose)
 
+    def read_steamer_batters_2015(self, filename, verbose=False):
+
+        header_row = ['full_name', 'team', 'pa', 'ab', 'h', 'h2b', 'h3b', 'hr', 
+                      'r','rbi', 'bb', 'k', 'hbp', 'sb', 'cs', '', 'avg', 'obp','slg','','','','','','','','','','','fg_id']
+        self.read_projection_csv(filename, 'steamer', 2015, 
+                                 is_actual=False,
+                                 player_type='batter',
+                                 header_row=header_row, 
+                                 post_processor=helper.batter_post_processor,
+                                 verbose=verbose)
+
     def read_steamer_pitchers_2014(self, filename, error_filename=None, verbose=False):
 
         header_row = [ 'full_name', 'w', 'l', 'era', 'gs', 'g', 'sv','ip', 
@@ -962,6 +1005,17 @@ class MyProjectionManager(pm.ProjectionManager):
                                  header_row=header_row, 
                                  post_processor=helper.pitcher_post_processor,
                                  error_filename=error_filename,
+                                 verbose=verbose)
+
+    def read_steamer_pitchers_2015(self, filename, verbose=False):
+
+        header_row = [ 'full_name', 'team','w', 'l', 'era', 'gs', 'g', 'sv','ip', 
+                      'h', 'er', 'hr', 'k', 'bb', 'whip', '', '', '', '','', 'fg_id'] 
+        self.read_projection_csv(filename, 'steamer', 2015, 
+                                 is_actual=False,
+                                 player_type='pitcher',
+                                 header_row=header_row, 
+                                 post_processor=helper.pitcher_post_processor,
                                  verbose=verbose)
 
 def pfm_processor(x):
