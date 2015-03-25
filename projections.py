@@ -940,15 +940,16 @@ class MyProjectionManager(pm.ProjectionManager):
                                  error_filename=error_filename,
                                  verbose=verbose)
 
-    def read_zips_batters_2015(self, filename, verbose=False):
+    def read_zips_batters_2015(self, filename,error_filename=None, verbose=False):
 
         header_row = ['full_name', 'team','g','pa', 'ab', 'h', 'h2b', 'h3b', 'hr', 
                       'r','rbi', 'bb', 'k', 'hbp', 'sb', 'cs', 'avg', 'obp','slg','','','','','','fg_id']
         self.read_projection_csv(filename, 'zips', 2015, 
                                  is_actual=False,
-                                 player_type='batter',
+                                 projection_type='batter',
                                  header_row=header_row, 
                                  post_processor=helper.batter_post_processor,
+                                 error_filename=error_filename,
                                  verbose=verbose)
 
     def read_zips_pitchers_2013(self, filename, error_filename=None, verbose=False):
@@ -976,15 +977,16 @@ class MyProjectionManager(pm.ProjectionManager):
                                  error_filename=error_filename,
                                  verbose=verbose)
 
-    def read_zips_pitchers_2015(self, filename, verbose=False):
+    def read_zips_pitchers_2015(self, filename, error_filename=None, verbose=False):
 
         header_row = [ 'full_name', 'team', 'w', 'l', 'era', 'gs', 'g', 'ip', 
                       'h', 'er', 'hr', 'k', 'bb', 'whip', '', '', '', '', 'fg_id'] 
         self.read_projection_csv(filename, 'zips', 2015, 
                                  is_actual=False,
-                                 player_type='pitcher',
+                                 projection_type='pitcher',
                                  header_row=header_row, 
                                  post_processor=helper.pitcher_post_processor,
+                                 error_filename=error_filename,
                                  verbose=verbose)
 
     # Steamer readers
