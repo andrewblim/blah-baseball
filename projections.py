@@ -17,9 +17,20 @@ class MyProjectionManager(pm.ProjectionManager):
         self.read_fangraphs_batters(os.path.join(base_dir, 'FanGraphs Actual Batting 2004-2013.csv'), 
                                     error_filename=os.path.join(base_dir, 'error_fangraphs_batting.csv'), 
                                     verbose=verbose)
+
+        print('Reading Fangraphs batting actuals, 2014...')
+        self.read_fangraphs_batters2014(os.path.join(base_dir, 'ActualsHitters2014.csv'), 
+                                    error_filename=os.path.join(base_dir, 'error_fangraphs_batting2014.csv'), 
+                                    verbose=verbose)
+        
         print('Reading Fangraphs pitching actuals, 2004-2013...')
         self.read_fangraphs_pitchers(os.path.join(base_dir, 'FanGraphs Actual Pitching 2004-2013.csv'), 
                                      error_filename=os.path.join(base_dir, 'error_fangraphs_pitching.csv'), 
+                                     verbose=verbose)
+
+        print('Reading Fangraphs pitching actuals, 2014...')
+        self.read_fangraphs_pitchers2014(os.path.join(base_dir, 'ActualsPitchers2014.csv'), 
+                                     error_filename=os.path.join(base_dir, 'error_fangraphs_pitching2014.csv'), 
                                      verbose=verbose)
 
         print('Reading PECOTA batting 2011...')
@@ -635,6 +646,34 @@ class MyProjectionManager(pm.ProjectionManager):
                                  error_filename=error_filename,
                                  verbose=verbose)
 
+
+    def read_fangraphs_batters2014(self, filename, error_filename=None, verbose=False):
+
+        fg_batter_header = ['full_name','team','g','pa','ab','obp','slg','r','rbi','sb','cs','fg_id']
+
+        self.read_projection_csv(filename, 
+                                 'actual', 
+                                 2014, 
+                                 is_actual=True, 
+                                 projection_type='batter', 
+                                 header_row=fg_batter_header,
+                                 post_processor=helper.batter_post_processor, 
+                                 error_filename=error_filename,
+                                 verbose=verbose)
+
+    def read_fangraphs_pitchers2014(self, filename, error_filename=None, verbose=False):
+
+        fg_pitcher_header = ['full_name','team','w','sv','g','gs','ip','era','k9','h','bb','ibb','hbp','fg_id']
+
+        self.read_projection_csv(filename, 
+                                 'actual', 
+                                 2014, 
+                                 is_actual=True, 
+                                 projection_type='pitcher', 
+                                 header_row=fg_pitcher_header,
+                                 post_processor=actual_pitcher_post_processor, 
+                                 error_filename=error_filename,
+                                 verbose=verbose)
 
     # PECOTA readers
 
