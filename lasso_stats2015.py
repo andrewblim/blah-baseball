@@ -22,13 +22,13 @@ base_dir = "C:\\Users\\Benjamin\\Dropbox\\Baseball\\CSVs for DB"
 pm = MyProjectionManager('sqlite:///projections.db')
 #pm = MyProjectionManager()
 
-pm.read_everything_csv(base_dir = base_dir,read_register=True, verbose=False)
+#pm.read_everything_csv(base_dir = base_dir,read_register=True, verbose=False)
 
 # what coefs get printed to stdout during the run
 print_nonzero_coefs_only = True
 
-#player_types = ['batter','pitcher']
-player_types = ['pitcher']
+player_types = ['batter','pitcher']
+#player_types = ['pitcher']
 #player_types = ['batter']
 playing_times = {'batter':'pa', 'pitcher':'ip'}
 stats = {'batter':['pa', 'ab', 'obp', 'slg', 'sbrate', 'csrate', 'runrate', 'rbirate'],
@@ -49,7 +49,7 @@ cv_num = 20
 min_pts ={'batter':300, 'pitcher':30}
 use_lars = False
 norm = True
-x2vars = False
+x2vars = True
 use_gls = True
 max_iter = 20000
 
@@ -58,12 +58,12 @@ max_iter = 20000
 filter_rates = False
 min_sample_pts = {'batter':300,'pitcher':40}
 
-use_rookies = False
+use_rookies = True
 use_ages = False
 use_teams = False
 special_winrate = False
     
-rmse_test = True
+rmse_test = False
 
 if rmse_test:
     proj_years = [2011,2012, 2013]
