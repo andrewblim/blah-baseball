@@ -12,28 +12,29 @@ from baseballprojections.aux_vars import *
 import warnings
 warnings.filterwarnings("ignore",category=DeprecationWarning)
 
-base_dir = "C:\\Users\\Benjamin\\Dropbox\\Baseball\\CSVs for DB"
+#base_dir = "C:\\Users\\Benjamin\\Dropbox\\Baseball\\CSVs for DB"
 #base_dir = "/Users/andrew_lim/Dropbox/Baseball/CSVs for DB"
 
-#base_dir = "/Users/bhebert/Dropbox/Baseball/CSVs for DB"
+base_dir = "/Users/bhebert/Dropbox/Baseball/CSVs for DB"
 
 
 
 pm = MyProjectionManager('sqlite:///projections.db')
 #pm = MyProjectionManager()
 
-#pm.read_everything_csv(base_dir = base_dir,read_register=True, verbose=False)
+
+#pm.read_everything_csv(base_dir = base_dir,read_register=False, verbose=False)
 
 # what coefs get printed to stdout during the run
 print_nonzero_coefs_only = True
 
-player_types = ['batter','pitcher']
-#player_types = ['pitcher']
+#player_types = ['batter','pitcher']
+player_types = ['pitcher']
 #player_types = ['batter']
 playing_times = {'batter':'pa', 'pitcher':'ip'}
 stats = {'batter':['pa', 'ab', 'obp', 'slg', 'sbrate', 'csrate', 'runrate', 'rbirate'],
          'pitcher':['g','gs','ip','era','whip','saverate','winrate','krate']}
-#stats = {'batter':['pa','obp'],'pitcher':['g','ip','winrate']}
+#stats = {'batter':['pa','obp'],'pitcher':['g','gs','ip','winrate']}
         # 'pitcher':['g','era','krate']}
 proj_systems = ['pecota', 'zips', 'steamer']
 proj_systems_sv = ['pecota','steamer']
@@ -49,7 +50,7 @@ cv_num = 20
 min_pts ={'batter':300, 'pitcher':30}
 use_lars = False
 norm = True
-x2vars = True
+x2vars = False
 use_gls = True
 max_iter = 20000
 
@@ -58,10 +59,10 @@ max_iter = 20000
 filter_rates = False
 min_sample_pts = {'batter':300,'pitcher':40}
 
-use_rookies = True
+use_rookies = False
 use_ages = False
 use_teams = False
-special_winrate = False
+special_winrate = True
     
 rmse_test = False
 
@@ -275,7 +276,7 @@ for player_type in player_types:
             proj_stats = [stat,'g','gs','era','krate']
 
         if special_winrate and stat == 'winrate':
-            proj_stats = ['winrate_ngf','winrate_gf','gfrac']
+            proj_stats = ['winrate','winrate_gf','gfrac'] #'winrate_ngf',
             
         projs = pm.get_player_year_data(proj_years, proj_systems,
                                         player_type, proj_stats,
@@ -431,7 +432,7 @@ for player_type in player_types:
             proj_stats = [stat,'g','gs','era','krate']
 
         if special_winrate and stat == 'winrate':
-            proj_stats = ['winrate_ngf','winrate_gf','gfrac']
+            proj_stats = ['winrate','winrate_gf','gfrac'] #'winrate_ngf',
       
         projs = pm.get_player_year_data([curr_year], proj_systems, 
                                         player_type, proj_stats, 
