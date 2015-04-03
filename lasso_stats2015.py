@@ -12,10 +12,9 @@ from baseballprojections.aux_vars import *
 import warnings
 warnings.filterwarnings("ignore",category=DeprecationWarning)
 
-#base_dir = "C:\\Users\\Benjamin\\Dropbox\\Baseball\\CSVs for DB"
+base_dir = "C:\\Users\\Benjamin\\Dropbox\\Baseball\\CSVs for DB"
 #base_dir = "/Users/andrew_lim/Dropbox/Baseball/CSVs for DB"
-
-base_dir = "/Users/bhebert/Dropbox/Baseball/CSVs for DB"
+#base_dir = "/Users/bhebert/Dropbox/Baseball/CSVs for DB"
 
 
 
@@ -23,13 +22,13 @@ pm = MyProjectionManager('sqlite:///projections.db')
 #pm = MyProjectionManager()
 
 
-#pm.read_everything_csv(base_dir = base_dir,read_register=False, verbose=False)
+#pm.read_everything_csv(base_dir = base_dir,read_register=True, verbose=False)
 
 # what coefs get printed to stdout during the run
 print_nonzero_coefs_only = True
 
-#player_types = ['batter','pitcher']
-player_types = ['pitcher']
+player_types = ['batter','pitcher']
+#player_types = ['pitcher']
 #player_types = ['batter']
 playing_times = {'batter':'pa', 'pitcher':'ip'}
 stats = {'batter':['pa', 'ab', 'obp', 'slg', 'sbrate', 'csrate', 'runrate', 'rbirate'],
@@ -50,7 +49,7 @@ cv_num = 20
 min_pts ={'batter':300, 'pitcher':30}
 use_lars = False
 norm = True
-x2vars = False
+x2vars = True
 use_gls = True
 max_iter = 20000
 
@@ -60,7 +59,7 @@ filter_rates = False
 min_sample_pts = {'batter':300,'pitcher':40}
 
 use_rookies = False
-use_ages = False
+use_ages = True
 use_teams = False
 special_winrate = True
     
@@ -564,14 +563,14 @@ for player_type in player_types:
         final_stat_proj = models[stat].predict(x2)
         final_projs[stat] = dict(zip(player_years2,final_stat_proj))
 
-        print(stat + ' mean and std. dev. check')
-        print(numpy.mean(ivars[stat],axis=0))
-        print(numpy.mean(ivars2_sample[stat],axis=0))
-        print(numpy.mean(ivars2[stat],axis=0))
-
-        print(numpy.std(ivars[stat],axis=0))
-        print(numpy.std(ivars2_sample[stat],axis=0))
-        print(numpy.std(ivars2[stat],axis=0))
+##        print(stat + ' mean and std. dev. check')
+##        print(numpy.mean(ivars[stat],axis=0))
+##        print(numpy.mean(ivars2_sample[stat],axis=0))
+##        print(numpy.mean(ivars2[stat],axis=0))
+##
+##        print(numpy.std(ivars[stat],axis=0))
+##        print(numpy.std(ivars2_sample[stat],axis=0))
+##        print(numpy.std(ivars2[stat],axis=0))
 
         systems = list(filter(lambda s: not ((stat in ['sv','saverate']) and s=='zips'),proj_systems))
 
