@@ -81,7 +81,13 @@ def get_age_var(player_years, proj_years, system, player_type, pm, weight):
         vals = pyear.split('_')
 
         players = filter(lambda p: p.fg_id == vals[0], all_players)
-        age = stat_age(next(players),int(vals[1]))
+
+        try:
+            player = next(players)
+        except StopIteration:
+            age = None
+        else:
+            age = stat_age(player,int(vals[1]))
         
         if age is not None:
             ages.append([age])
